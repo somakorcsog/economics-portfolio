@@ -280,14 +280,14 @@
         "Money"
       ],
       "featured": true,
-      "excerpt": "Our class visited WU Vienna (Vienna University of Economics and Business) for the FMA Breakfast. Afterwards I interviewed a classmate about what we learned about Austria's Financial Market Authority.",
+      "excerpt": "We attended the 3rd Financial Education Breakfast of WU Vienna and the Austrian Financial Market Authority (FMA), all about financial fraud. Afterwards I interviewed a classmate about what we learned.",
       "blocks": [
         {
           "type": "text",
           "content": [
-            "On **6 November 2026** our Economics class visited **WU Vienna** (Vienna University of Economics and Business) to attend the **FMA Breakfast**, an event hosted by the Austrian Financial Market Authority (FMA).",
+            "On **6 November 2026** our Economics class visited **WU Vienna** (Vienna University of Economics and Business) for the **3rd Financial Education Breakfast** (Finanzbildungsfrühstück). It was organised by the **WU Competence Center for Financial Literacy** and the **Austrian Financial Market Authority (FMA)** in Festsaal 1 of the LC building on the WU campus.",
             "",
-            "After the event I filmed a short interview with a classmate about our impressions of the university and what we learned about how financial markets in Austria are supervised."
+            "After the event I filmed a short interview with a classmate about our impressions."
           ]
         },
         {
@@ -302,22 +302,37 @@
           "text": "FMA Focus Area"
         },
         {
-          "type": "notes",
-          "label": "From the class handout",
+          "type": "text",
           "content": [
-            "### What is the FMA?",
-            "_Paste your notes from the handout here._",
+            "### Topic: financial fraud",
+            "How can you tell serious financial offers from dubious ones? This question no longer affects only adults. **Young people are more and more often targeted by fraudsters.** That is why this breakfast focused on **financial fraud**: experts showed current developments and how students can learn to recognise scams.",
             "",
-            "### Main focus areas",
-            "- _Focus area 1_",
-            "- _Focus area 2_",
-            "- _Focus area 3_",
-            "",
-            "### Key terms",
-            "- **Term:** _explanation_",
+            "The event is based on a cooperation between WU and the FMA: the FMA's series **\"Reden wir über Geld\"** (\"Let's talk about money\") is turned into teaching material for schools by WU."
+          ]
+        },
+        {
+          "type": "notes",
+          "label": "Programme",
+          "content": [
+            "- **09:00** Arrival and first coffee",
+            "- **09:10** Welcome: a member of the WU rectorate, Bettina Fuhrmann (WU Vienna) and Fiona Springer (FMA)",
+            "- **09:20** _Your money. Your decision. Your future._ Financial education as the key to self-determination and independence. Martina Künsberg Sarre (Member of the National Council)",
+            "- **09:30** _Financial education is education for life._ Let's talk about money and our future. Mariana Kühnel (FMA)",
+            "- **09:40** _Financial fraud: you never stop learning._ Fiona Springer and Patricia Floh-Weninger (FMA)",
+            "- **10:00** _On the trail of fraud:_ the work of the Federal Criminal Police Office (Bundeskriminalamt)",
+            "- **10:20** _On the trail of fraud:_ what students can (and should) recognise. Alexander Pittesser (BHAK10, WU Vienna)",
+            "- **11:00** Discussion with rolls and refreshments"
+          ]
+        },
+        {
+          "type": "notes",
+          "label": "My notes",
+          "content": [
+            "### What I learned",
+            "- _Paste your own notes from the handout here._",
             "",
             "### My reflection",
-            "_What did I find most interesting, and why does financial market supervision matter for ordinary people?_"
+            "_Which warning signs of financial fraud do you remember, and why are young people a target?_"
           ]
         }
       ]
@@ -361,6 +376,80 @@
             "4. **Systems & GDP:** GDP = C + I + G + (X − M), with consumer spending, investment, government spending, exports and imports.",
             "5. **Business cycle & inflation:** expansion, peak and recession, and how prices rise.",
             "6. **Jobs, banks, politics & trade:** the actors that keep the economy running."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "oenb-debate-competitiveness",
+      "title": "OeNB Debate: Competitiveness, Prosperity and Quality of Life",
+      "date": "2026-10-22",
+      "categories": [
+        "Excursions & Events",
+        "Europe",
+        "International",
+        "Money"
+      ],
+      "excerpt": "Panel discussion at the Austrian National Bank (OeNB): are competitiveness, prosperity and quality of life the same thing? We also talked about the digital euro, China, hidden champions and the crisis in France.",
+      "blocks": [
+        {
+          "type": "text",
+          "content": [
+            "On **22 October 2026** we attended a panel discussion at the **Oesterreichische Nationalbank (OeNB)** in the Kassasaal, from 17:30 to 20:30. The title was:",
+            "",
+            "> Motoren der Wettbewerbsfähigkeit, des Wohlstands und der Lebensqualität? _(Engines of competitiveness, prosperity and quality of life?)_"
+          ]
+        },
+        {
+          "type": "notes",
+          "label": "The panel",
+          "content": [
+            "- **Hans Bürger:** domestic politics expert at ORF, author (moderator)",
+            "- **Leonore Gewessler:** Member of Parliament, federal spokesperson of the Greens, former Minister for Climate Protection and Infrastructure",
+            "- **Barbara Kolm:** Member of Parliament, FPÖ economic spokesperson, long-time Vice President of the OeNB",
+            "- **Ralf Kronberger:** chief economist of the Austrian Economic Chamber (WKO), member of the Fiscal Advisory Council",
+            "- **Christoph Matznetter:** Member of Parliament, SPÖ economic spokesperson, former State Secretary in the Ministry of Finance",
+            "- **Matthias Schnetzer:** chief economist of the Chamber of Labour (AK)",
+            "- **Madlen Stottmeyer:** chief reporter at Die Presse"
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Key questions"
+        },
+        {
+          "type": "text",
+          "content": [
+            "- How could a **digital euro** affect the prosperity of the population?",
+            "- How are **competitiveness, prosperity and quality of life** connected, and do they sometimes contradict each other?",
+            "- Does more economic prosperity automatically mean a better quality of life, or do other factors matter just as much or even more?"
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "What we discussed"
+        },
+        {
+          "type": "text",
+          "content": [
+            "### The crisis in France",
+            "At the start, the panel talked about the crisis in France, which was a very hot topic in October.",
+            "",
+            "### China: work vs. quality of life",
+            "Is China only so successful because people there focus almost entirely on work, while in Austria we also value enjoying life? This connects directly to the main question: a more competitive economy does not automatically mean a higher quality of life.",
+            "",
+            "### The digital euro",
+            "Will the digital euro run into problems in the future? And could it help Europe become **less dependent on American payment providers** such as Visa, Mastercard or PayPal?",
+            "",
+            "### Hidden champions",
+            "Austria has many **hidden champions**: companies that most people have never heard of, but that produce a lot and are often world market leaders in a small niche. The panel discussed how important these firms are for Austria's economy and jobs."
+          ]
+        },
+        {
+          "type": "notes",
+          "label": "My reflection",
+          "content": [
+            "_Add your opinion here: is quality of life more important than economic growth? Would you use a digital euro?_"
           ]
         }
       ]
