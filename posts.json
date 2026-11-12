@@ -809,6 +809,10 @@
       {
         "label": "Animations",
         "text": "Discuss which animations make the most sense without overdoing it. Then add a subtle scroll reveal and check whether the existing animations can be improved."
+      },
+      {
+        "label": "Features",
+        "text": "Underline glossary terms inside the posts and show their explanation on hover. Add a nice link preview for when the site is shared on WhatsApp or Teams."
       }
     ]
   }

@@ -370,6 +370,53 @@
   }
 
   /* ---------- post ---------- */
+  /* Glossary terms inside posts: first mention gets a hover/focus explanation */
+  function linkGlossary(root) {
+    var list = (state.data.glossary || []).slice().sort(function (a, b) { return b.term.length - a.term.length; });
+    if (!list.length) return;
+    function forms(t) {
+      var e = t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), f = [e + "s", e + "es", e];
+      if (/y$/i.test(t)) f.unshift(e.slice(0, -1) + "ies");
+      return f;
+    }
+    var used = {}, n = 0;
+    var blocks = root.querySelectorAll(".article-body .prose");
+    list.forEach(function (g) {
+      var re = new RegExp("(^|[^\\w])(" + forms(g.term).join("|") + ")(?![\\w])", "i");
+      for (var b = 0; b < blocks.length && !used[g.term]; b++) {
+        var walker = document.createTreeWalker(blocks[b], NodeFilter.SHOW_TEXT, {
+          acceptNode: function (node) {
+            return node.parentElement.closest("a, h1, h2, h3, h4, code, .gloss, .quiz") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+          }
+        });
+        var node;
+        while ((node = walker.nextNode())) {
+          var m = re.exec(node.nodeValue);
+          if (!m) continue;
+          var start = m.index + m[1].length, word = m[2];
+          var after = node.splitText(start); after.nodeValue = after.nodeValue.slice(word.length);
+          var id = "gloss-tip-" + (++n);
+          var span = document.createElement("span");
+          span.className = "gloss"; span.tabIndex = 0; span.setAttribute("aria-describedby", id);
+          span.innerHTML = esc(word) + '<span class="gloss-tip" role="tooltip" id="' + id + '"><strong>' + esc(g.term) + "</strong>" + esc(g.definition) + "</span>";
+          node.parentNode.insertBefore(span, after);
+          used[g.term] = true;
+          break;
+        }
+      }
+    });
+    root.querySelectorAll(".gloss").forEach(function (el) {
+      var place = function () {
+        var tip = el.querySelector(".gloss-tip"); tip.style.setProperty("--shift", "0px");
+        var r = tip.getBoundingClientRect(), pad = 12, dx = 0;
+        if (r.left < pad) dx = pad - r.left; else if (r.right > window.innerWidth - pad) dx = window.innerWidth - pad - r.right;
+        tip.style.setProperty("--shift", dx + "px");
+        el.classList.toggle("below", r.top < 70);
+      };
+      el.addEventListener("mouseenter", place); el.addEventListener("focus", place);
+    });
+  }
+
   function renderPost(id) {
     var post = postById(id);
     if (!post) { app.innerHTML = '<div class="container"><div class="empty" style="margin-block:96px"><strong>Post not found</strong><a class="link" href="#">Back to the start page</a></div></div>'; return; }
@@ -387,6 +434,7 @@
       (older ? '<a href="#post-' + esc(older.id) + '"><span>‹ Older</span><h4>' + esc(older.title) + "</h4></a>" : "<div></div>") +
       (newer ? '<a class="next" href="#post-' + esc(newer.id) + '"><span>Newer ›</span><h4>' + esc(newer.title) + "</h4></a>" : "<div></div>") + "</nav>";
     wireBlocks(app);
+    linkGlossary(app);
     window.scrollTo(0, 0);
   }
 

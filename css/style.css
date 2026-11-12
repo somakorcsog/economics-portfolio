@@ -425,6 +425,18 @@ h1, h2, h3 { text-wrap: balance; }
 .btn:active { transform: scale(.97); }
 .promo:hover { transform: translateY(-3px); }
 
+/* Glossary terms inside posts */
+.gloss { position: relative; text-decoration: underline dotted; text-decoration-color: var(--accent); text-decoration-thickness: 1.5px; text-underline-offset: 4px; cursor: help; border-radius: 3px; outline-offset: 2px; }
+.gloss-tip { position: absolute; z-index: 30; left: 50%; bottom: calc(100% + 10px); width: max-content; max-width: min(300px, 80vw);
+  transform: translate(calc(-50% + var(--shift, 0px)), 6px); opacity: 0; pointer-events: none; visibility: hidden;
+  background: var(--band); color: var(--band-ink); padding: 12px 14px; border-radius: 12px; box-shadow: 0 14px 34px -12px rgba(0,0,0,.45);
+  font-size: 14px; line-height: 1.45; font-weight: 400; font-style: normal; text-align: left; white-space: normal; transition: opacity .18s, transform .22s cubic-bezier(.2,.8,.2,1), visibility .18s; }
+.gloss-tip strong { display: block; font-weight: 700; margin-bottom: 3px; color: var(--band-ink); }
+.gloss.below .gloss-tip { bottom: auto; top: calc(100% + 10px); transform: translate(calc(-50% + var(--shift, 0px)), -6px); }
+.gloss:hover .gloss-tip, .gloss:focus .gloss-tip { opacity: 1; visibility: visible; transform: translate(calc(-50% + var(--shift, 0px)), 0); }
+:root[data-theme="dark"] .gloss-tip { background: #1d2c4c; box-shadow: 0 0 0 1px #34476e, 0 14px 34px -12px rgba(0,0,0,.7); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .gloss-tip { background: #1d2c4c; box-shadow: 0 0 0 1px #34476e, 0 14px 34px -12px rgba(0,0,0,.7); } }
+
 /* Scroll reveal: only for content that starts below the screen, plays once */
 .will-reveal { opacity: 0; transform: translateY(24px); animation: none !important; transition: opacity .7s ease, transform .8s cubic-bezier(.2,.8,.2,1); }
 .will-reveal.is-in { opacity: 1; transform: none; }
