@@ -1,6 +1,6 @@
 # Economics with Soma Korcsog
 
-Blog und Portfolio für meine Economics-Aufgaben. Reines HTML, Tailwind (CDN) und JavaScript, kein Build-Schritt.
+Blog und Portfolio für meine Economics-Aufgaben. Reines HTML, CSS und JavaScript, kein Build-Schritt.
 
 ## Vorschau starten
 

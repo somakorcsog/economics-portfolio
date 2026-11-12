@@ -195,6 +195,7 @@
     return c;
   }
   function topics() { var c = counts(); return (state.data.categories || []).filter(function (x) { return c[x] > 0; }); }
+  function lastUpdated() { var p = posts().slice().sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); })[0]; return p ? formatDate(p.date) : ""; }
   function schoolLine() { var s = state.data.site || {}; return s.school ? s.school + (s.city ? ", " + s.city : "") : ""; }
   function pageHead(kicker, title, sub) {
     return '<header class="page-head container"><div class="eyebrow">' + esc(kicker) + '</div><h1>' + esc(title) + "</h1>" + (sub ? "<p>" + esc(sub) + "</p>" : "") + "</header>";
@@ -210,7 +211,7 @@
       '<div class="home-hero-text"><div class="hero-kicker">' + esc("School year " + (site.schoolYear || "")) + "</div>" +
       "<h1>Economics.<span>" + esc(site.author ? "with " + site.author + "." : "") + "</span></h1>" +
       '<p class="hero-sub">Assignments, videos, interviews and excursions from my Economics class.</p>' +
-      '<p class="hero-note"><span class="live-dot" aria-hidden="true"></span>New content every week</p>' +
+      '<p class="hero-note"><span class="live-dot" aria-hidden="true"></span>New content every week' + (lastUpdated() ? '<span class="hero-note-sep" aria-hidden="true">·</span><span class="hero-note-date">Last updated ' + esc(lastUpdated()) + "</span>" : "") + "</p>" +
       '<div class="hero-actions"><a class="btn" href="#posts">View all assignments</a>' +
       (all[0] ? '<a class="link" href="#post-' + esc(all[0].id) + '">Read the latest</a>' : "") + "</div></div>" +
       '<aside class="glance" aria-label="At a glance"><div class="glance-title">At a glance</div>' +
@@ -227,8 +228,9 @@
         return '<a class="topic-mini tone-' + TONES[i % 4] + '" href="#topic-' + slug(cat) + '"><span class="count">' + (c[cat] || 0) + (c[cat] === 1 ? " post" : " posts") + "</span><h3>" + esc(cat) + "</h3><p>" + esc((d.topicDescriptions || {})[cat] || "") + "</p></a>";
       }).join("") + "</div></section>";
 
+    if (d.challenge) h += '<section class="home-block container"><a class="challenge-banner" href="#quiz"><div><div class="eyebrow">Economics Challenge</div><h3>Bored? Test yourself in ' + (d.challenge.rounds || 10) + ' quick questions.</h3><p>Answer fast for more points. Can you beat your best score?</p></div><span class="btn">Play now</span></a></section>';
     h += '<section class="home-block container"><div class="duo">' +
-      '<a class="promo" href="#glossary"><div class="eyebrow">Glossary</div><h3>' + (d.glossary || []).length + " key terms, explained in one sentence.</h3><span class=\"link\">Open the glossary</span></a>" +
+      '<a class="promo" href="#glossary"><div class="eyebrow">Key terms</div><h3>' + (d.glossary || []).length + " key terms, explained in one sentence.</h3><span class=\"link\">See all key terms</span></a>" +
       (mo && mo.prompts ? '<a class="promo dark" href="#making-of"><div class="eyebrow">How it was made</div><h3>Built with ' + mo.prompts.length + ' prompts, not code.</h3><span class="link">See the prompts</span></a>' : "") +
       "</div></section>";
     app.innerHTML = h;
@@ -318,11 +320,11 @@
   /* ---------- glossary ---------- */
   function renderGlossaryPage() {
     var d = state.data;
-    document.title = "Glossary · " + (d.site.title || "Economics");
+    document.title = "Key terms · " + (d.site.title || "Economics");
     var letters = {};
     (d.glossary || []).forEach(function (t) { letters[t.term.charAt(0).toUpperCase()] = 1; });
-    app.innerHTML = pageHead("Glossary", "Key terms", "Every key term from my assignments, explained in one sentence.") +
-      '<div class="container"><div class="glossary-tools"><label class="search-wrap"><span class="sr-only">Search the glossary</span>' + SEARCH_ICON +
+    app.innerHTML = pageHead("Key terms", "Key terms, simply explained", "Every important word from my assignments, explained in one sentence.") +
+      '<div class="container"><div class="glossary-tools"><label class="search-wrap"><span class="sr-only">Search the key terms</span>' + SEARCH_ICON +
       '<input id="glossary-search" class="search" type="search" placeholder="Search terms, e.g. GDP" value="' + esc(state.glossaryQuery) + '"></label>' +
       '<div class="az">' + "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(function (l) {
         return letters[l] ? '<button type="button" data-letter="' + l + '">' + l + "</button>" : '<span>' + l + "</span>";
@@ -366,7 +368,8 @@
       (site.schoolYear ? "<div><dt>School year</dt><dd>" + esc(site.schoolYear) + "</dd></div>" : "") +
       "<div><dt>Subject</dt><dd>" + esc(site.subject || "Economics") + "</dd></div>" +
       "<div><dt>Assignments</dt><dd>" + posts().length + "</dd></div>" +
-      '<div><dt>Built with</dt><dd><a class="link" href="#making-of">See the prompts</a></dd></div></dl></div>';
+      '<div><dt>Built with</dt><dd><a class="link" href="#making-of">See the prompts</a></dd></div>' +
+      '<div><dt>Feedback</dt><dd><a class="link" href="#feedback">Report a bug or idea</a></dd></div></dl></div>';
   }
 
   /* ---------- post ---------- */
@@ -525,14 +528,163 @@
     }, { passive: true });
   }
 
+
+  /* ---------- Economics Challenge (quiz game) ---------- */
+  var game = null;
+  function stopChallengeTimer() { if (game && game.timer) { cancelAnimationFrame(game.timer); game.timer = null; } }
+  function bestScore() { try { return parseInt(localStorage.getItem("challenge-best") || "0", 10) || 0; } catch (e) { return 0; } }
+  function saveBest(n) { try { if (n > bestScore()) localStorage.setItem("challenge-best", String(n)); } catch (e) {} }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  var LETTERS = ["A", "B", "C", "D"];
+  function gameIntoView() {
+    var box = document.getElementById("game"); if (!box) return;
+    var top = box.getBoundingClientRect().top;
+    if (top < 70 || top > window.innerHeight * 0.4) window.scrollTo({ top: window.scrollY + top - 84, behavior: "smooth" });
+  }
+
+  function renderChallenge() {
+    var c = state.data.challenge || { questions: [] };
+    document.title = "Quiz · " + (state.data.site.title || "Economics");
+    var best = bestScore();
+    app.innerHTML = pageHead("Quiz", c.title || "Economics Challenge", c.intro || "") +
+      '<div class="container"><div class="game" id="game"><div class="game-intro">' +
+      '<div class="game-rules"><div><strong>' + (c.rounds || 10) + '</strong><span>questions</span></div><div><strong>' + (c.seconds || 20) + ' s</strong><span>per question</span></div><div><strong>1,000</strong><span>points max each</span></div><div><strong>' + (best ? best.toLocaleString("en") : "–") + '</strong><span>your best</span></div></div>' +
+      '<p class="game-hint">Faster answers score more points, and a streak of correct answers earns a bonus. You can also answer with the keys 1 to 4.</p>' +
+      '<button type="button" class="btn game-start" id="game-start">Start the challenge</button></div></div></div>';
+    document.getElementById("game-start").addEventListener("click", startGame);
+  }
+
+  function startGame() {
+    var c = state.data.challenge;
+    var pool = shuffle(c.questions).slice(0, c.rounds || 10).map(function (q) {
+      var order = shuffle(q.options.map(function (_, i) { return i; }));
+      return { q: q.q, options: order.map(function (i) { return q.options[i]; }), answer: order.indexOf(q.answer), explain: q.explain, post: q.post };
+    });
+    game = { qs: pool, i: 0, score: 0, streak: 0, right: 0, missed: [], secs: c.seconds || 20, timer: null, locked: false, left: 1 };
+    showQuestion();
+  }
+
+  function showQuestion() {
+    var g = game, q = g.qs[g.i], box = document.getElementById("game");
+    if (!box) return;
+    g.locked = false; g.left = 1;
+    box.innerHTML = '<div class="game-top"><span>Question ' + (g.i + 1) + " of " + g.qs.length + '</span><span class="game-streak" id="game-streak">' + (g.streak >= 2 ? g.streak + " in a row" : "") + '</span><span class="game-score">' + g.score.toLocaleString("en") + " pts</span></div>" +
+      '<div class="game-timer"><div class="game-timer-track"><div class="game-timer-bar" id="game-bar"></div></div><span id="game-secs">' + g.secs + "</span></div>" +
+      '<h2 class="game-q">' + esc(q.q) + "</h2>" +
+      '<div class="game-answers">' + q.options.map(function (o, k) {
+        return '<button type="button" class="game-a a' + k + '" data-k="' + k + '"><span class="game-letter">' + LETTERS[k] + "</span><span>" + esc(o) + "</span></button>";
+      }).join("") + "</div>" +
+      '<div class="game-after" id="game-after" hidden></div>';
+    box.querySelectorAll(".game-a").forEach(function (b) { b.addEventListener("click", function () { answer(parseInt(b.getAttribute("data-k"), 10)); }); });
+    gameIntoView();
+    var t0 = performance.now(), total = g.secs * 1000, bar = document.getElementById("game-bar"), sec = document.getElementById("game-secs");
+    (function tick(now) {
+      if (game !== g || g.locked) return;
+      var left = Math.max(0, total - (now - t0));
+      g.left = left / total;
+      bar.style.transform = "scaleX(" + g.left + ")";
+      bar.classList.toggle("low", left < 5000);
+      sec.textContent = Math.ceil(left / 1000);
+      if (left <= 0) { answer(-1); return; }
+      g.timer = requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  function answer(k) {
+    var g = game; if (!g || g.locked) return;
+    g.locked = true; stopChallengeTimer();
+    var q = g.qs[g.i], ok = k === q.answer, pts = 0;
+    if (ok) {
+      g.streak++; g.right++;
+      pts = Math.round(500 + 500 * g.left) + (g.streak >= 2 ? Math.min(300, (g.streak - 1) * 100) : 0);
+      g.score += pts;
+    } else { g.streak = 0; g.missed.push(q); }
+    var box = document.getElementById("game");
+    box.querySelectorAll(".game-a").forEach(function (b) {
+      var kk = parseInt(b.getAttribute("data-k"), 10); b.disabled = true;
+      if (kk === q.answer) b.classList.add("is-right"); else if (kk === k) b.classList.add("is-wrong"); else b.classList.add("is-dim");
+    });
+    var post = q.post && postById(q.post);
+    var after = document.getElementById("game-after");
+    after.hidden = false;
+    after.innerHTML = '<div class="game-verdict ' + (ok ? "ok" : "no") + '">' + (ok ? "Correct! +" + pts.toLocaleString("en") : (k === -1 ? "Time's up" : "Not quite")) + "</div>" +
+      "<p>" + esc(q.explain || "") + (post ? ' <a class="link" href="#post-' + esc(post.id) + '" target="_blank" rel="noopener">From: ' + esc(post.title) + "</a>" : "") + "</p>" +
+      '<button type="button" class="btn" id="game-next">' + (g.i + 1 < g.qs.length ? "Next question" : "See my result") + "</button>";
+    var top = box.querySelector(".game-score"); if (top) top.textContent = g.score.toLocaleString("en") + " pts";
+    var st = document.getElementById("game-streak"); if (st) st.textContent = g.streak >= 2 ? g.streak + " in a row" : "";
+    var next = document.getElementById("game-next"); next.focus({ preventScroll: true });
+    next.addEventListener("click", function () { g.i++; if (g.i < g.qs.length) showQuestion(); else showResult(); });
+  }
+
+  function showResult() {
+    var g = game, box = document.getElementById("game"), n = g.qs.length, ratio = g.right / n;
+    var prev = bestScore(); saveBest(g.score);
+    var rank = ratio >= 0.9 ? "Chief Economist" : ratio >= 0.7 ? "Economist" : ratio >= 0.5 ? "Analyst" : ratio >= 0.3 ? "Intern" : "Rookie";
+    box.innerHTML = '<div class="game-result"><div class="eyebrow">Your result</div><div class="game-final">' + g.score.toLocaleString("en") + "<span>points</span></div>" +
+      '<div class="game-rank">' + rank + " · " + g.right + " of " + n + " correct</div>" +
+      (g.score > prev ? '<div class="game-best">New personal best!</div>' : prev ? '<div class="game-best muted">Your best: ' + prev.toLocaleString("en") + "</div>" : "") +
+      (g.missed.length ? '<div class="game-review"><div class="side-label">Worth another look</div><ul>' + g.missed.map(function (q) {
+        return "<li><strong>" + esc(q.q) + "</strong><span>" + esc(q.options[q.answer]) + "</span></li>";
+      }).join("") + "</ul></div>" : "") +
+      '<div class="game-actions"><button type="button" class="btn" id="game-again">Play again</button><a class="link" href="#posts">Browse the assignments</a></div></div>';
+    game = null;
+    gameIntoView();
+    document.getElementById("game-again").addEventListener("click", startGame);
+  }
+  document.addEventListener("keydown", function (e) {
+    if (!game || game.locked || /input|textarea|select/i.test((e.target && e.target.tagName) || "")) return;
+    var k = "1234".indexOf(e.key); if (k > -1 && k < game.qs[game.i].options.length) answer(k);
+  });
+
+  /* ---------- feedback ---------- */
+  function renderFeedback() {
+    var site = state.data.site || {};
+    document.title = "Feedback · " + (site.title || "Economics");
+    var types = ["Bug", "Slow or laggy", "Idea", "Other"];
+    app.innerHTML = pageHead("Feedback", "Found a bug or have an idea?", "Something not working, loading slowly, or a suggestion to make the site better? Send it here and it goes straight to me.") +
+      '<div class="container"><form class="feedback" id="feedback-form" novalidate>' +
+      '<fieldset class="fb-types"><legend>What is it about?</legend>' + types.map(function (t, i) {
+        return '<label class="fb-chip"><input type="radio" name="type" value="' + esc(t) + '"' + (i === 0 ? " checked" : "") + "><span>" + esc(t) + "</span></label>";
+      }).join("") + "</fieldset>" +
+      '<label class="fb-field"><span>Your message <em>required</em></span><textarea name="message" rows="6" required maxlength="3000" placeholder="What happened, and on which page?"></textarea></label>' +
+      '<div class="fb-row"><label class="fb-field"><span>Name <em>optional</em></span><input name="name" type="text" maxlength="80" autocomplete="name"></label>' +
+      '<label class="fb-field"><span>Email for a reply <em>optional</em></span><input name="email" type="email" maxlength="120" autocomplete="email"></label></div>' +
+      '<input type="text" name="_honey" class="sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+      '<div class="fb-actions"><button type="submit" class="btn" id="fb-send">Send feedback</button><span class="fb-status" id="fb-status" role="status"></span></div>' +
+      "</form></div>";
+    var form = document.getElementById("feedback-form"), status = document.getElementById("fb-status"), btn = document.getElementById("fb-send");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var fd = new FormData(form), msg = String(fd.get("message") || "").trim(), mail = String(fd.get("email") || "").trim();
+      status.className = "fb-status";
+      if (!msg) { status.textContent = "Please write a short message first."; status.classList.add("err"); form.elements.message.focus(); return; }
+      if (mail && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) { status.textContent = "That email address doesn't look right."; status.classList.add("err"); form.elements.email.focus(); return; }
+      if (fd.get("_honey")) return;
+      if (!site.feedbackEndpoint) { status.textContent = "Feedback is not set up yet."; status.classList.add("err"); return; }
+      btn.disabled = true; status.textContent = "Sending…";
+      var body = { _subject: "Website feedback: " + fd.get("type"), _template: "table", _captcha: "false", type: fd.get("type"), message: msg, name: String(fd.get("name") || "").trim() || "(not given)", page: location.href };
+      if (mail) { body.email = mail; body._replyto = mail; }
+      fetch(site.feedbackEndpoint, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(body) })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json().catch(function () { return {}; }); })
+        .then(function (res) {
+          if (res && (res.success === false || res.success === "false")) throw new Error(res.message || "failed");
+          form.innerHTML = '<div class="fb-done"><div class="game-verdict ok">Thank you!</div><p>Your feedback was sent. I read every message.</p><a class="link" href="#home">Back to the home page</a></div>';
+        })
+        .catch(function () { btn.disabled = false; status.textContent = "Sending didn't work. Please try again in a moment."; status.classList.add("err"); });
+    });
+  }
+
   function route() {
     var h = decodeURIComponent(location.hash.replace(/^#/, ""));
     var page = "home";
+    stopChallengeTimer(); game = null;
     document.title = (state.data.site && state.data.site.title) || "Economics";
     if (h.indexOf("post-") === 0) { page = "posts"; renderPost(h.slice(5)); }
     else if (h === "making-of") { page = "making-of"; renderMakingOf(); }
     else if (h === "glossary") { page = "glossary"; renderGlossaryPage(); }
     else if (h === "about") { page = "about"; renderAbout(); }
+    else if (h === "quiz") { page = "quiz"; renderChallenge(); }
+    else if (h === "feedback") { page = "feedback"; renderFeedback(); }
     else if (h === "posts" || h === "topics" || h.indexOf("topic-") === 0) {
       page = "posts";
       if (h.indexOf("topic-") === 0) state.filter = h.slice(6) || "all"; else if (h === "posts") state.filter = state.filter || "all";

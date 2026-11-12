@@ -13,7 +13,8 @@
       "Here I collect everything we do in class and outside of it: team assignments, short explainer videos, interviews and notes from excursions to places like WU Vienna, the Austrian National Bank and the GEWINN fair.",
       "",
       "Every post belongs to one or more topics from our curriculum, from how markets and money work to business cycles, Europe and the global economy."
-    ]
+    ],
+    "feedbackEndpoint": "https://formsubmit.co/ajax/somakorcsog1@gmail.com"
   },
   "categories": [
     "Markets",
@@ -732,7 +733,7 @@
     "prompts": [
       {
         "label": "The first prompt",
-        "text": "Create a modern, clean, and responsive Economics blog and portfolio website in English for my school assignments (similar in structure to modern Wix economics blogs, but with a much cleaner, faster, and more contemporary design).\n\n1. Structure & Navigation:\n- Header: Website title 'Economics Portfolio' (or 'Economics with [MY FIRST NAME]') and a clean navigation bar.\n- Categories / Topics: Include a filterable overview and menu structure for core economics topics: All Posts, Introduction, Markets, Money, Business Cycles, Sustainability, Europe, International, and Excursions & Events.\n- Media Support: The blog must easily support multiple assignment formats: text articles, embedded videos (MP4 files or YouTube links), audio/podcasts (MP3 players), and embedded presentations (PDFs or slides).\n\n2. First Assignment (Ready to go):\nCreate the very first blog post as a featured article right at the top of the page:\n- Title: 'Visit to WU Vienna: FMA Breakfast & Classmate Interview'\n- Category: Excursions & Events (and Money)\n- Date: November 2026\n- Content: Include a clean placeholder section for our filmed video interview with a classmate about our visit to the WU (Vienna University of Economics and Business) and the FMA (Financial Market Authority) Breakfast, plus a structured text section below the video titled 'FMA Focus Area' where I can easily paste my notes from the class handout.\n\n3. Super Easy Workflow for Future Assignments:\nI do not want to edit HTML or CSS myself. Store all posts in a single, super simple data file (like posts.json or separate Markdown files in a posts/ folder). When I give you new texts, videos, podcasts, or presentations in the future and say 'Add this as a new assignment', you will update the site automatically.\n\n4. Setup:\nBuild the site using simple, reliable web technologies (HTML, Tailwind CSS, vanilla JavaScript) so it can be hosted for free anywhere (like GitHub Pages or Netlify). Start a local preview server so I can view it right away, and briefly explain how I can drop in my interview video file.\n\n5. If you have any questions, please ask before you start."
+        "text": "Create a modern, clean, and responsive Economics blog and portfolio website in English for my school assignments (similar in structure to modern Wix economics blogs, but with a much cleaner, faster, and more contemporary design).\n\n1. Structure & Navigation:\n- Header: Website title 'Economics Portfolio' (or 'Economics with [MY FIRST NAME]') and a clean navigation bar.\n- Categories / Topics: Include a filterable overview and menu structure for core economics topics: All Posts, Introduction, Markets, Money, Business Cycles, Sustainability, Europe, International, and Excursions & Events.\n- Media Support: The blog must easily support multiple assignment formats: text articles, embedded videos (MP4 files or YouTube links), audio/podcasts (MP3 players), and embedded presentations (PDFs or slides).\n\n2. First Assignment (Ready to go):\nCreate the very first blog post as a featured article right at the top of the page:\n- Title: 'Visit to WU Vienna: FMA Breakfast & Classmate Interview'\n- Category: Excursions & Events (and Money)\n- Date: November 2026\n- Content: Include a clean placeholder section for our filmed video interview with a classmate about our visit to the WU (Vienna University of Economics and Business) and the FMA (Financial Market Authority) Breakfast, plus a structured text section below the video titled 'FMA Focus Area' where I can easily paste my notes from the class handout.\n\n3. Super Easy Workflow for Future Assignments:\nI do not want to edit HTML or CSS myself. Store all posts in a single, super simple data file (like posts.json or separate Markdown files in a posts/ folder). When I give you new texts, videos, podcasts, or presentations in the future and say 'Add this as a new assignment', you will update the site automatically.\n\n4. Setup:\nBuild the site using simple, reliable web technologies (HTML, CSS, vanilla JavaScript) so it can be hosted for free anywhere (like GitHub Pages or Netlify). Start a local preview server so I can view it right away, and briefly explain how I can drop in my interview video file.\n\n5. If you have any questions, please ask before you start."
       },
       {
         "label": "Setup",
@@ -821,6 +822,310 @@
       {
         "label": "Spacing",
         "text": "The home page feels too cramped. Give the sections more space."
+      },
+      {
+        "label": "New features",
+        "text": "Show a \"last updated\" date, but only when a new assignment is added. Add a Kahoot-style quiz inside the website for when people are bored or want to test themselves: not too hard, not too easy. Remove Tailwind if nothing changes. Add a feedback form for suggestions, lags or bugs that is sent to my email automatically."
+      },
+      {
+        "label": "Naming",
+        "text": "Change \"Glossary\" to a simpler word."
+      }
+    ]
+  },
+  "challenge": {
+    "title": "Economics Challenge",
+    "intro": "Bored, or want to test what you know? Ten quick questions from my assignments. Answer fast for more points.",
+    "seconds": 20,
+    "rounds": 10,
+    "questions": [
+      {
+        "q": "Between which years did around €200 billion flow through Danske Bank's Estonian branch?",
+        "options": [
+          "2001–2005",
+          "2007–2015",
+          "2016–2020",
+          "2019–2023"
+        ],
+        "answer": 1,
+        "explain": "From 2007 to 2015, mostly from foreign customers.",
+        "post": "money-laundering-danske-bank"
+      },
+      {
+        "q": "Roughly how much did Danske Bank have to pay in the USA in 2022?",
+        "options": [
+          "$20 million",
+          "$200 million",
+          "$2 billion",
+          "$20 billion"
+        ],
+        "answer": 2,
+        "explain": "It pleaded guilty and paid around 2 billion US dollars.",
+        "post": "money-laundering-danske-bank"
+      },
+      {
+        "q": "What is a whistleblower?",
+        "options": [
+          "A referee in a football match",
+          "An employee who reports wrongdoing inside their organisation",
+          "A bank's chief economist",
+          "A tax inspector"
+        ],
+        "answer": 1,
+        "explain": "Howard Wilkinson was the whistleblower in the Danske Bank case.",
+        "post": "money-laundering-danske-bank"
+      },
+      {
+        "q": "Why do criminals need a bank for money laundering?",
+        "options": [
+          "To get lower interest rates",
+          "To make illegal money look legal in the financial system",
+          "To avoid paying for an account",
+          "To print new banknotes"
+        ],
+        "answer": 1,
+        "explain": "Moving money through the system makes it look like it has a legal source.",
+        "post": "money-laundering-danske-bank"
+      },
+      {
+        "q": "What makes Bitcoin different from most memecoins?",
+        "options": [
+          "It has no limit",
+          "Its supply is capped at 21 million",
+          "It was created as a joke",
+          "It is issued by the ECB"
+        ],
+        "answer": 1,
+        "explain": "Bitcoin's fixed supply is why many people call it digital gold.",
+        "post": "memecoins-explained"
+      },
+      {
+        "q": "Buying something only because you hope its price will rise quickly is called…",
+        "options": [
+          "Saving",
+          "Speculation",
+          "Inflation",
+          "Diversification"
+        ],
+        "answer": 1,
+        "explain": "Memecoins are mostly about speculation.",
+        "post": "memecoins-explained"
+      },
+      {
+        "q": "Which of these is an example of a memecoin from the post?",
+        "options": [
+          "Euro",
+          "PepeCoin",
+          "Ethereum",
+          "Gold"
+        ],
+        "answer": 1,
+        "explain": "PepeCoin and Banana Coin started as internet jokes.",
+        "post": "memecoins-explained"
+      },
+      {
+        "q": "In GDP = C + I + G + (X − M), what does M stand for?",
+        "options": [
+          "Money supply",
+          "Imports",
+          "Manufacturing",
+          "Margins"
+        ],
+        "answer": 1,
+        "explain": "X are exports and M are imports.",
+        "post": "how-the-economy-works"
+      },
+      {
+        "q": "What is scarcity?",
+        "options": [
+          "Prices falling over time",
+          "Unlimited wants but limited resources",
+          "A shortage of banks",
+          "A type of tax"
+        ],
+        "answer": 1,
+        "explain": "Scarcity is the starting point of economics.",
+        "post": "how-the-economy-works"
+      },
+      {
+        "q": "In the circular flow, what do households give firms?",
+        "options": [
+          "Laws and rules",
+          "Work and spending",
+          "Interest rates",
+          "Exports"
+        ],
+        "answer": 1,
+        "explain": "Households supply work and buy goods; firms pay wages and sell products.",
+        "post": "how-the-economy-works"
+      },
+      {
+        "q": "What usually happens to unemployment in a recession?",
+        "options": [
+          "It falls",
+          "It rises",
+          "It stays exactly the same",
+          "It disappears"
+        ],
+        "answer": 1,
+        "explain": "When the economy shrinks, firms hire less.",
+        "post": "how-the-economy-works"
+      },
+      {
+        "q": "Inflation means that…",
+        "options": [
+          "Money buys more over time",
+          "Prices rise and money loses purchasing power",
+          "Interest rates are zero",
+          "GDP is falling"
+        ],
+        "answer": 1,
+        "explain": "A general rise in prices.",
+        "post": "how-the-economy-works"
+      },
+      {
+        "q": "At the GEWINN fair, which sector was named the main reason for Austria's weak growth?",
+        "options": [
+          "Tourism",
+          "Construction",
+          "Banking",
+          "Agriculture"
+        ],
+        "answer": 1,
+        "explain": "The construction boom has ended.",
+        "post": "gewinn-fair-2026"
+      },
+      {
+        "q": "How much higher are China's goods exports than five years ago, according to the talk?",
+        "options": [
+          "10%",
+          "30%",
+          "70%",
+          "150%"
+        ],
+        "answer": 2,
+        "explain": "Europe's exports are about 10% lower in the same period.",
+        "post": "gewinn-fair-2026"
+      },
+      {
+        "q": "Roughly how much of the world's goods are produced in China?",
+        "options": [
+          "Every tenth",
+          "Every fifth",
+          "Every third",
+          "Half"
+        ],
+        "answer": 2,
+        "explain": "And every third service comes from the USA.",
+        "post": "gewinn-fair-2026"
+      },
+      {
+        "q": "Which two reasons were given for rising interest rates?",
+        "options": [
+          "Low taxes and tourism",
+          "Inflation from energy prices and lots of new debt",
+          "Falling wages and strikes",
+          "More cash and fewer banks"
+        ],
+        "answer": 1,
+        "explain": "Energy-driven inflation plus debt, much of it for AI investment.",
+        "post": "gewinn-fair-2026"
+      },
+      {
+        "q": "According to Gerald Hörhan, what is the biggest financial mistake of the middle class?",
+        "options": [
+          "Renting a flat",
+          "Buying your own home",
+          "Investing in shares",
+          "Saving money"
+        ],
+        "answer": 1,
+        "explain": "He suggested buying small flats to rent out instead.",
+        "post": "gewinn-fair-2026"
+      },
+      {
+        "q": "What does the OeNB stand for?",
+        "options": [
+          "Austria's central bank",
+          "Austria's stock exchange",
+          "A political party",
+          "An EU court"
+        ],
+        "answer": 0,
+        "explain": "Oesterreichische Nationalbank, part of the Eurosystem.",
+        "post": "oenb-debate-competitiveness"
+      },
+      {
+        "q": "Who would issue a digital euro?",
+        "options": [
+          "The Austrian government",
+          "The European Central Bank",
+          "Visa and Mastercard",
+          "Each commercial bank"
+        ],
+        "answer": 1,
+        "explain": "It would be a digital form of cash from the ECB.",
+        "post": "oenb-debate-competitiveness"
+      },
+      {
+        "q": "One hope for the digital euro is that Europe becomes less dependent on…",
+        "options": [
+          "Chinese factories",
+          "American payment providers",
+          "Russian gas",
+          "Swiss banks"
+        ],
+        "answer": 1,
+        "explain": "Such as Visa, Mastercard or PayPal.",
+        "post": "oenb-debate-competitiveness"
+      },
+      {
+        "q": "What are hidden champions?",
+        "options": [
+          "Secret Olympic athletes",
+          "Little-known firms that lead the world market in a niche",
+          "State-owned banks",
+          "Start-ups that failed"
+        ],
+        "answer": 1,
+        "explain": "Austria has many of them.",
+        "post": "oenb-debate-competitiveness"
+      },
+      {
+        "q": "What does the FMA do?",
+        "options": [
+          "Prints euro banknotes",
+          "Supervises Austria's financial market",
+          "Collects taxes",
+          "Runs the stock exchange"
+        ],
+        "answer": 1,
+        "explain": "The Financial Market Authority supervises banks, insurers and more.",
+        "post": "wu-vienna-fma-breakfast"
+      },
+      {
+        "q": "Which topic was the focus of the 3rd Financial Education Breakfast?",
+        "options": [
+          "Climate change",
+          "Financial fraud",
+          "Tourism",
+          "Pensions"
+        ],
+        "answer": 1,
+        "explain": "Young people are more and more often targeted by fraudsters.",
+        "post": "wu-vienna-fma-breakfast"
+      },
+      {
+        "q": "A shell company is…",
+        "options": [
+          "A company that sells seafood",
+          "A company that exists only on paper",
+          "A petrol station chain",
+          "A government ministry"
+        ],
+        "answer": 1,
+        "explain": "Shell companies were used in the Danske Bank case.",
+        "post": "money-laundering-danske-bank"
       }
     ]
   }
