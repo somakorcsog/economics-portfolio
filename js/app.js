@@ -1,52 +1,27 @@
-/* Economics Portfolio: renders everything from posts.json.
+/* Economics with Soma Korcsog: renders everything from posts.json.
    You never need to edit this file to add a post. */
 (function () {
   "use strict";
 
-  var TOPIC_COLORS = {
-    "introduction": "--t-intro",
-    "markets": "--t-markets",
-    "money": "--t-money",
-    "business-cycles": "--t-cycles",
-    "sustainability": "--t-sustain",
-    "europe": "--t-europe",
-    "international": "--t-international",
-    "excursions-events": "--t-events"
-  };
-
-  var ICONS = {
-    text: '<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-    video: '<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" fill="currentColor"/></svg>',
-    audio: '<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 10V7m3 5V4m3 7V5m3 4V7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-    slides: '<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="3" width="11" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 11v2.5M5.5 13.5h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
-    image: '<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="3" width="11" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m3.5 11.5 3-3 2 2 1.5-1.5 2.5 2.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>'
-  };
-  var FORMAT_NAMES = { text: "Article", video: "Video", audio: "Audio / Podcast", slides: "Presentation", image: "Images" };
-
-  var state = { data: null, filter: "all", query: "" };
+  var state = { data: null, filter: "all", query: "", glossaryQuery: "" };
   var app = document.getElementById("app");
+  var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   /* ---------- helpers ---------- */
-  function slug(s) {
-    return String(s).toLowerCase().replace(/&/g, " ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-  }
+  function slug(s) { return String(s).toLowerCase().replace(/&/g, " ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""); }
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
   }
-  function topicVar(cat) { return "var(" + (TOPIC_COLORS[slug(cat)] || "--muted") + ")"; }
   function toText(c) { return Array.isArray(c) ? c.join("\n") : String(c || ""); }
-
-  function formatDate(d) {
+  function formatDate(d, short) {
     if (!d) return "";
-    var parts = String(d).split("-");
-    var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    var y = parts[0], m = parseInt(parts[1], 10), day = parseInt(parts[2], 10);
+    var p = String(d).split("-"), y = p[0], m = parseInt(p[1], 10), day = parseInt(p[2], 10);
     if (!m) return y;
-    return (day ? day + " " : "") + months[m - 1] + " " + y;
+    var mon = short ? MONTHS[m - 1].slice(0, 3) : MONTHS[m - 1];
+    return (day ? day + " " : "") + mon + " " + y;
   }
-
   function inline(s) {
     s = esc(s);
     s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
@@ -56,44 +31,27 @@
     s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+|[^)\s:]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
     return s;
   }
-
-  /* Small Markdown renderer: headings, lists, quotes, paragraphs, bold, italic, links. */
   function markdown(src) {
     var lines = toText(src).replace(/\r/g, "").split("\n");
     var out = [], para = [], list = null;
     function flushPara() { if (para.length) { out.push("<p>" + inline(para.join(" ")) + "</p>"); para = []; } }
-    function flushList() { if (list) { out.push("<" + list.tag + ">" + list.items.map(function (i) { return "<li>" + inline(i) + "</li>"; }).join("") + "</" + list.tag + ">"); list = null; } }
+    function flushList() { if (list) { out.push("<" + list.tag + (list.start > 1 ? ' start="' + list.start + '"' : "") + ">" + list.items.map(function (i) { return "<li>" + inline(i) + "</li>"; }).join("") + "</" + list.tag + ">"); list = null; } }
     lines.forEach(function (raw) {
       var line = raw.trim(), m;
       if (!line) { flushPara(); flushList(); return; }
-      if ((m = line.match(/^(#{1,3})\s+(.*)$/))) {
-        flushPara(); flushList();
-        var lvl = Math.min(m[1].length + 1, 3);
-        out.push("<h" + lvl + ">" + inline(m[2]) + "</h" + lvl + ">");
-      } else if ((m = line.match(/^[-*•]\s+(.*)$/))) {
-        flushPara();
-        if (!list || list.tag !== "ul") { flushList(); list = { tag: "ul", items: [] }; }
-        list.items.push(m[1]);
-      } else if ((m = line.match(/^\d+[.)]\s+(.*)$/))) {
-        flushPara();
-        if (!list || list.tag !== "ol") { flushList(); list = { tag: "ol", items: [] }; }
-        list.items.push(m[1]);
-      } else if ((m = line.match(/^>\s?(.*)$/))) {
-        flushPara(); flushList();
-        out.push("<blockquote>" + inline(m[1]) + "</blockquote>");
-      } else {
-        flushList(); para.push(line);
-      }
+      if ((m = line.match(/^(#{1,3})\s+(.*)$/))) { flushPara(); flushList(); var l = Math.min(m[1].length + 1, 3); out.push("<h" + l + ">" + inline(m[2]) + "</h" + l + ">"); }
+      else if ((m = line.match(/^[-*•]\s+(.*)$/))) { flushPara(); if (!list || list.tag !== "ul") { flushList(); list = { tag: "ul", items: [] }; } list.items.push(m[1]); }
+      else if ((m = line.match(/^(\d+)[.)]\s+(.*)$/))) { flushPara(); if (!list || list.tag !== "ol") { flushList(); list = { tag: "ol", items: [], start: parseInt(m[1], 10) }; } list.items.push(m[2]); }
+      else if ((m = line.match(/^>\s?(.*)$/))) { flushPara(); flushList(); out.push("<blockquote>" + inline(m[1]) + "</blockquote>"); }
+      else { flushList(); para.push(line); }
     });
     flushPara(); flushList();
     return out.join("");
   }
-
   function youtubeId(url) {
     var m = String(url).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/))([\w-]{11})/);
     return m ? m[1] : null;
   }
-
   function slidesEmbed(url) {
     url = String(url);
     var m = url.match(/docs\.google\.com\/presentation\/d\/([\w-]+)/);
@@ -101,331 +59,388 @@
     if (/canva\.com\/design\//.test(url) && !/[?&]embed/.test(url)) return url.split("?")[0].replace(/\/(edit|view)\/?$/, "/view") + "?embed";
     return url;
   }
-
-  function postFormats(post) {
-    var f = {};
-    (post.blocks || []).forEach(function (b) {
-      var t = b.type;
-      if (t === "video" || t === "youtube") f.video = 1;
-      else if (t === "audio" || t === "podcast") f.audio = 1;
-      else if (t === "pdf" || t === "slides" || t === "presentation") f.slides = 1;
-      else if (t === "image") f.image = 1;
-      else f.text = 1;
-    });
-    return Object.keys(f);
-  }
-
+  function hasType(post, types) { return (post.blocks || []).some(function (b) { return types.indexOf(b.type) > -1; }); }
+  function hasVideo(post) { return hasType(post, ["video", "youtube"]); }
   function readingTime(post) {
     var words = 0;
     (post.blocks || []).forEach(function (b) { if (b.content) words += toText(b.content).split(/\s+/).length; });
     return Math.max(1, Math.round(words / 200));
   }
-
-  function tags(cats, linked) {
-    return (cats || []).map(function (c) {
-      var inner = '<span class="dot" style="--topic:' + topicVar(c) + '"></span>' + esc(c);
-      return linked
-        ? '<a class="tag" style="--topic:' + topicVar(c) + '" href="#topic-' + slug(c) + '">' + inner + "</a>"
-        : '<span class="tag" style="--topic:' + topicVar(c) + '">' + inner + "</span>";
-    }).join("");
-  }
-
-  function formatIcons(post) {
-    return '<span class="formats">' + postFormats(post).map(function (f) {
-      return '<span class="format-icon" title="' + FORMAT_NAMES[f] + '" aria-label="' + FORMAT_NAMES[f] + '">' + ICONS[f] + "</span>";
-    }).join("") + "</span>";
-  }
-
-  function sortedPosts() {
+  function posts() {
     return (state.data.posts || []).filter(function (p) { return !p.draft; }).slice().sort(function (a, b) {
       return String(b.date).localeCompare(String(a.date)) || (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
     });
   }
-
-  /* ---------- media blocks ---------- */
-  function placeholder(title, file, note) {
-    return '<div class="placeholder"><div class="frame-art"></div>' +
-      '<div class="play-circle"><svg width="26" height="26" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" fill="currentColor"/></svg></div>' +
-      "<strong>" + esc(title) + "</strong>" +
-      (file ? "<code>" + esc(file) + "</code>" : "") +
-      (note ? "<span>" + esc(note) + "</span>" : "") + "</div>";
+  function postById(id) { return (state.data.posts || []).filter(function (p) { return p.id === id; })[0]; }
+  function formatLabel(post) {
+    var f = [];
+    if (hasVideo(post)) f.push("Video");
+    if (hasType(post, ["audio", "podcast"])) f.push("Podcast");
+    if (hasType(post, ["pdf", "slides", "presentation"])) f.push("Slides");
+    if (hasType(post, ["quiz"])) f.push("Quiz");
+    return f.length ? f.join(" · ") : readingTime(post) + " min read";
   }
 
+  /* Cover: a photo, or a big typographic tile */
+  function cover(post, opts) {
+    opts = opts || {};
+    var play = hasVideo(post) ? '<span class="play"><svg width="22" height="22" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" fill="currentColor"/></svg></span>' : "";
+    if (post.cover) return '<div class="cover"><img src="' + esc(post.cover) + '" alt="" loading="lazy">' + play + "</div>";
+    var a = post.coverArt || { big: post.title.split(/[:\s]/)[0], small: "", tone: "sky" };
+    return '<div class="cover cover-art tone-' + esc(a.tone || "sky") + '">' +
+      (opts.chip ? '<span class="chip">' + esc(opts.chip) + "</span>" : "") +
+      '<div class="big">' + esc(a.big) + "</div>" + (a.small ? '<div class="small">' + esc(a.small) + "</div>" : "") + "</div>";
+  }
+
+  /* ---------- blocks ---------- */
+  function placeholder(title, file, note) {
+    return '<div class="placeholder"><div class="play"><svg width="24" height="24" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" fill="currentColor"/></svg></div>' +
+      "<strong>" + esc(title) + "</strong>" + (file ? "<code>" + esc(file) + "</code>" : "") + (note ? "<span>" + esc(note) + "</span>" : "") + "</div>";
+  }
   function caption(b) { return b.caption ? "<figcaption>" + inline(b.caption) + "</figcaption>" : ""; }
 
+  var quizCount = 0;
   function renderBlock(b) {
     var t = (b.type || "text").toLowerCase();
     switch (t) {
-      case "heading":
-        return '<h2 class="section-heading" id="' + slug(b.text) + '">' + esc(b.text) + "</h2>";
-
-      case "text":
-        return '<div class="prose">' + markdown(b.content) + "</div>";
-
-      case "notes":
-        return '<div class="notes">' + (b.label ? '<span class="eyebrow">' + esc(b.label) + "</span>" : "") +
-          '<div class="prose">' + markdown(b.content) + "</div></div>";
-
-      case "quote":
-        return '<div class="prose"><blockquote>' + inline(toText(b.content)) + (b.author ? "<br>— " + esc(b.author) : "") + "</blockquote></div>";
-
+      case "heading": return '<h2 class="section-heading" id="' + slug(b.text) + '">' + esc(b.text) + "</h2>";
+      case "text": return '<div class="prose">' + markdown(b.content) + "</div>";
+      case "notes": return '<div class="notes">' + (b.label ? '<span class="label">' + esc(b.label) + "</span>" : "") + '<div class="prose">' + markdown(b.content) + "</div></div>";
+      case "quote": return '<div class="prose"><blockquote>' + inline(toText(b.content)) + (b.author ? "<br>— " + esc(b.author) : "") + "</blockquote></div>";
       case "video":
-        if (!b.src) {
-          return '<figure class="media"><div class="media-frame">' + placeholder(b.title || "Video coming soon", "", "Video will be added soon.") + "</div>" + caption(b) + "</figure>";
-        }
-        return '<figure class="media"><div class="media-frame" data-video>' +
+        var portrait = b.portrait === true;
+        if (!b.src) return '<figure class="media"><div class="media-frame">' + placeholder(b.title || "Video coming soon", "", "The video will be added soon.") + "</div>" + caption(b) + "</figure>";
+        return '<figure class="media"><div class="media-frame' + (portrait ? " portrait" : "") + '" data-video>' +
           '<video controls playsinline preload="metadata"' + (b.poster ? ' poster="' + esc(b.poster) + '"' : "") + ">" +
-          '<source src="' + esc(b.src) + '" type="' + (/\.webm$/i.test(b.src) ? "video/webm" : /\.mov$/i.test(b.src) ? "video/quicktime" : "video/mp4") + '">' +
-          "</video>" +
-          '<template>' + placeholder(b.title || "Video coming soon", b.src, "Put the video file at this path to show it here.") + "</template>" +
-          "</div>" + caption(b) + "</figure>";
-
+          '<source src="' + esc(b.src) + '" type="' + (/\.webm$/i.test(b.src) ? "video/webm" : "video/mp4") + '"></video>' +
+          "<template>" + placeholder(b.title || "Video coming soon", "", "The video will be added soon.") + "</template></div>" + caption(b) + "</figure>";
       case "youtube":
         var id = youtubeId(b.url || b.src);
         if (!id) return "";
-        return '<figure class="media"><div class="media-frame"><iframe src="https://www.youtube-nocookie.com/embed/' + id +
-          '" title="' + esc(b.title || "YouTube video") + '" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div>' +
-          caption(b) + "</figure>";
-
-      case "audio":
-      case "podcast":
-        return '<figure class="audio-card"><div class="audio-head"><span class="audio-icon">' + ICONS.audio.replace(/14/g, "20") + "</span>" +
-          "<div><div class=\"display\" style=\"font-weight:700;font-size:1.05rem\">" + esc(b.title || "Podcast episode") + "</div>" +
-          (b.caption ? '<div class="muted" style="font-size:.86rem">' + inline(b.caption) + "</div>" : "") + "</div></div>" +
+        return '<figure class="media"><div class="media-frame"><iframe src="https://www.youtube-nocookie.com/embed/' + id + '" title="' + esc(b.title || "YouTube video") +
+          '" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div>' + caption(b) + "</figure>";
+      case "audio": case "podcast":
+        return '<figure class="audio-card"><div><div style="font-weight:600;font-size:1.1rem">' + esc(b.title || "Podcast episode") + "</div>" +
+          (b.caption ? '<div class="muted" style="font-size:.9rem">' + inline(b.caption) + "</div>" : "") + "</div>" +
           '<audio controls preload="metadata" src="' + esc(b.src) + '"></audio></figure>';
-
       case "pdf":
-        return '<figure class="media"><div class="doc-bar"><div><div class="eyebrow">PDF</div><div class="display" style="font-weight:700;font-size:1.1rem">' + esc(b.title || "Document") + "</div></div>" +
-          '<a class="btn secondary" href="' + esc(b.src) + '" target="_blank" rel="noopener">Open PDF</a></div>' +
+        return '<figure class="media"><div class="doc-bar"><div style="font-weight:600;font-size:1.1rem">' + esc(b.title || "Document") + '</div><a class="btn-ghost" href="' + esc(b.src) + '" target="_blank" rel="noopener">Open PDF</a></div>' +
           '<div class="media-frame tall"><iframe src="' + esc(b.src) + '#view=FitH" title="' + esc(b.title || "PDF") + '" loading="lazy"></iframe></div>' + caption(b) + "</figure>";
-
-      case "slides":
-      case "presentation":
-        var url = slidesEmbed(b.url || b.src);
-        return '<figure class="media"><div class="doc-bar"><div><div class="eyebrow">Presentation</div><div class="display" style="font-weight:700;font-size:1.1rem">' + esc(b.title || "Slides") + "</div></div>" +
-          '<a class="btn secondary" href="' + esc(b.url || b.src) + '" target="_blank" rel="noopener">Open slides</a></div>' +
-          '<div class="media-frame"><iframe src="' + esc(url) + '" title="' + esc(b.title || "Slides") + '" allowfullscreen loading="lazy"></iframe></div>' + caption(b) + "</figure>";
-
-      case "image":
-        return '<figure class="media"><img src="' + esc(b.src) + '" alt="' + esc(b.alt || b.caption || "") + '" loading="lazy">' + caption(b) + "</figure>";
-
-      case "link":
-        return '<p><a class="btn" href="' + esc(b.url) + '" target="_blank" rel="noopener">' + esc(b.text || b.url) + " →</a></p>";
-
-      default:
-        return b.content ? '<div class="prose">' + markdown(b.content) + "</div>" : "";
+      case "slides": case "presentation":
+        return '<figure class="media"><div class="doc-bar"><div style="font-weight:600;font-size:1.1rem">' + esc(b.title || "Slides") + '</div><a class="btn-ghost" href="' + esc(b.url || b.src) + '" target="_blank" rel="noopener">Open slides</a></div>' +
+          '<div class="media-frame"><iframe src="' + esc(slidesEmbed(b.url || b.src)) + '" title="' + esc(b.title || "Slides") + '" allowfullscreen loading="lazy"></iframe></div>' + caption(b) + "</figure>";
+      case "image": return '<figure class="media"><img class="single" src="' + esc(b.src) + '" alt="' + esc(b.alt || b.caption || "") + '" loading="lazy">' + caption(b) + "</figure>";
+      case "gallery":
+        return '<div class="gallery">' + (b.images || []).map(function (im) {
+          return '<figure><img src="' + esc(im.src) + '" alt="' + esc(im.caption || "") + '" loading="lazy" data-zoom>' + (im.caption ? "<figcaption>" + esc(im.caption) + "</figcaption>" : "") + "</figure>";
+        }).join("") + "</div>";
+      case "link": return '<p><a class="btn" href="' + esc(b.url) + '" target="_blank" rel="noopener">' + esc(b.text || b.url) + "</a></p>";
+      case "quiz":
+        var qid = "quiz-" + (quizCount++);
+        return '<section class="quiz" id="' + qid + '" data-quiz><div class="quiz-head"><h3>' + esc(b.title || "Test yourself") + '</h3><span class="quiz-score" data-score>0 of ' + (b.questions || []).length + " answered</span></div>" +
+          (b.questions || []).map(function (q, i) {
+            return '<div class="q" data-answer="' + q.answer + '"><div class="q-text">' + (i + 1) + ". " + esc(q.q) + '</div><div class="q-options">' +
+              q.options.map(function (o, j) { return '<button type="button" class="q-opt" data-i="' + j + '">' + esc(o) + "</button>"; }).join("") +
+              '</div><div class="q-explain" hidden>' + esc(q.explain || "") + "</div></div>";
+          }).join("") + "</section>";
+      default: return b.content ? '<div class="prose">' + markdown(b.content) + "</div>" : "";
     }
   }
 
-  /* When a video file is missing, swap in the placeholder. */
-  function wireVideos(root) {
+  function wireBlocks(root) {
     root.querySelectorAll("[data-video]").forEach(function (frame) {
       var video = frame.querySelector("video"), tpl = frame.querySelector("template");
       if (!video || !tpl) return;
-      var swap = function () { if (frame.contains(video)) { frame.innerHTML = tpl.innerHTML; } };
+      var swap = function () { if (frame.contains(video)) { frame.classList.remove("portrait"); frame.innerHTML = tpl.innerHTML; } };
       var source = video.querySelector("source");
       if (source) source.addEventListener("error", swap);
       video.addEventListener("error", swap);
     });
+    root.querySelectorAll("[data-quiz]").forEach(function (quiz) {
+      var qs = quiz.querySelectorAll(".q"), done = 0, right = 0, score = quiz.querySelector("[data-score]");
+      qs.forEach(function (q) {
+        var ans = parseInt(q.getAttribute("data-answer"), 10);
+        q.querySelectorAll(".q-opt").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var pick = parseInt(btn.getAttribute("data-i"), 10);
+            q.querySelectorAll(".q-opt").forEach(function (b2) {
+              b2.disabled = true;
+              if (parseInt(b2.getAttribute("data-i"), 10) === ans) b2.classList.add("correct");
+            });
+            if (pick !== ans) btn.classList.add("wrong"); else right++;
+            done++;
+            q.querySelector(".q-explain").hidden = false;
+            score.textContent = done === qs.length ? "You got " + right + " of " + qs.length + " right" + (right === qs.length ? ". Perfect!" : "") : done + " of " + qs.length + " answered";
+          });
+        });
+      });
+    });
+    root.querySelectorAll("[data-zoom]").forEach(function (img) {
+      img.addEventListener("click", function () {
+        var box = document.createElement("div");
+        box.className = "lightbox"; box.innerHTML = '<img src="' + img.getAttribute("src") + '" alt="' + esc(img.alt) + '">';
+        box.addEventListener("click", function () { box.remove(); });
+        document.body.appendChild(box);
+      });
+    });
   }
 
-  /* ---------- views ---------- */
-
+  /* ---------- home ---------- */
   function renderHome() {
-    var d = state.data, site = d.site || {};
-    var posts = sortedPosts();
-    var featured = posts.filter(function (p) { return p.featured; })[0] || posts[0];
+    var d = state.data, site = d.site || {}, all = posts();
+    var featured = all.filter(function (p) { return p.featured; })[0] || all[0];
     var counts = {};
-    posts.forEach(function (p) { (p.categories || []).forEach(function (c) { counts[c] = (counts[c] || 0) + 1; }); });
-
-    var title = site.title || "Economics Portfolio";
-    var titleHtml = esc(title).replace(/^(Economics)/, "<em>$1</em>");
-
+    all.forEach(function (p) { (p.categories || []).forEach(function (c) { counts[c] = (counts[c] || 0) + 1; }); });
     var schoolLine = site.school ? site.school + (site.city ? ", " + site.city : "") : "";
-    var html = '<section class="hero"><div class="hero-glow" aria-hidden="true"></div><div class="flex flex-col gap-5 relative">' +
-      '<span class="eyebrow">' + esc((site.subject || "Economics") + (site.schoolYear ? " · School year " + site.schoolYear : "")) + "</span>" +
-      "<h1>" + titleHtml + "</h1><p>" + esc(site.intro || "") + "</p>" +
-      '<div class="flex flex-wrap gap-3"><a class="btn" href="#posts">Browse assignments</a>' +
-      (featured ? '<a class="btn secondary" href="#post-' + esc(featured.id) + '">Latest post</a>' : "") + "</div>" +
-      '</div><aside class="hero-card relative" aria-label="Portfolio details">' +
-      '<div class="flex items-center gap-4"><span class="monogram">' + esc((site.author || site.title || "E").split(/\s+/).map(function (w) { return w[0]; }).join("").slice(0, 2)) + "</span>" +
-      '<div class="min-w-0"><div class="eyebrow">Student portfolio</div><div class="display hero-card-name">' + esc(site.author || site.title) + "</div></div></div>" +
-      '<dl class="facts">' +
-      (schoolLine ? '<div class="wide"><dt>School</dt><dd>' + esc(schoolLine) + "</dd></div>" : "") +
-      (site.schoolYear ? '<div class="wide"><dt>School year</dt><dd>' + esc(site.schoolYear) + "</dd></div>" : "") +
-      '<div><dt>Assignments</dt><dd>' + posts.length + "</dd></div>" +
-      '<div><dt>Topics</dt><dd>' + (d.categories || []).length + "</dd></div></dl>" +
-      (featured ? '<a class="hero-latest" href="#post-' + esc(featured.id) + '"><span class="eyebrow">Latest</span><span class="hero-latest-title">' + esc(featured.title) + '</span><span aria-hidden="true">→</span></a>' : "") +
-      "</aside></section>";
+    var reelImgs = [];
+    all.forEach(function (p) { (p.blocks || []).forEach(function (b) { if (b.type === "gallery") (b.images || []).forEach(function (im) { reelImgs.push({ src: im.src, caption: im.caption, id: p.id }); }); }); });
 
+    var h = "";
+    // Hero
+    h += '<section class="hero container"><div class="hero-kicker">' + esc(["School year " + (site.schoolYear || ""), schoolLine].filter(Boolean).join(" · ")) + "</div>" +
+      "<h1>Economics.<span>" + esc(site.author ? "with " + site.author + "." : "") + "</span></h1>" +
+      '<p class="hero-sub">Assignments, videos, interviews and excursions from my Economics class.</p>' +
+      '<div class="hero-actions"><a class="btn" href="#posts">View assignments</a>' +
+      (featured ? '<a class="link" href="#post-' + esc(featured.id) + '">Read the latest</a>' : "") + "</div>" +
+      (reelImgs.length ? '<div class="reel" aria-label="Stills from our explainer video">' + reelImgs.map(function (im) {
+        return '<figure><a href="#post-' + esc(im.id) + '"><img src="' + esc(im.src) + '" alt="' + esc(im.caption || "") + '"></a>' + (im.caption ? "<figcaption>" + esc(im.caption) + "</figcaption>" : "") + "</figure>";
+      }).join("") + "</div>" : "") + "</section>";
+
+    // Featured band
     if (featured) {
-      var hasVideo = postFormats(featured).indexOf("video") > -1;
-      html += '<a class="featured" href="#post-' + esc(featured.id) + '">' +
-        '<div class="featured-media">' + (featured.cover ? '<img src="' + esc(featured.cover) + '" alt="">' :
-          '<div class="frame-art"></div><div class="featured-glow"></div><div class="play-circle">' + (hasVideo ? ICONS.video.replace(/14/g, "26") : ICONS.text.replace(/14/g, "26")) + "</div>" +
-          '<span class="media-label mono">' + (hasVideo ? "Video interview" : "Article") + "</span>") + "</div>" +
-        '<div class="featured-body"><span class="badge-featured">Featured assignment</span>' +
-        '<div class="flex flex-wrap gap-2">' + tags(featured.categories) + "</div>" +
-        "<h2>" + esc(featured.title) + "</h2>" +
-        '<p class="muted">' + esc(featured.excerpt || "") + "</p>" +
-        '<div class="card-meta"><span class="mono">' + formatDate(featured.date) + "</span>" + formatIcons(featured) + "</div>" +
-        "</div></a>";
+      h += '<section class="section band" style="margin-top:72px"><div class="container featured reveal">' +
+        '<div><div class="eyebrow">Featured · ' + esc((featured.categories || []).join(", ")) + "</div><h2>" + esc(featured.title) + "</h2>" +
+        "<p>" + esc(featured.excerpt || "") + '</p><div class="meta">' + formatDate(featured.date) + " · " + formatLabel(featured) + "</div>" +
+        '<a class="link" href="#post-' + esc(featured.id) + '">Read the full post</a></div>' +
+        '<a href="#post-' + esc(featured.id) + '" aria-label="' + esc(featured.title) + '">' + cover(featured, { chip: formatDate(featured.date) }) + "</a></div></section>";
     }
 
-    var desc = d.topicDescriptions || {};
-    html += '<section class="pt-16 flex flex-col gap-5"><div><span class="eyebrow">Curriculum</span><h2 class="display section-title">Explore the topics</h2></div>' +
-      '<div class="topic-grid">' + (d.categories || []).map(function (c) {
-        return '<a class="topic-tile" style="--topic:' + topicVar(c) + '" href="#topic-' + slug(c) + '">' +
-          '<span class="topic-count mono">' + (counts[c] || 0) + (counts[c] === 1 ? " post" : " posts") + "</span>" +
-          "<h3>" + esc(c) + "</h3><p>" + esc(desc[c] || "") + "</p></a>";
-      }).join("") + "</div></section>";
+    // Stats
+    var videos = all.filter(hasVideo).length;
+    var events = counts["Excursions & Events"] || 0;
+    h += '<section class="section"><div class="container"><div class="stats reveal">' +
+      stat(all.length, "Assignments") + stat(events, "Excursions & events") + stat(videos, "Videos") + stat((d.glossary || []).length, "Key terms") +
+      "</div></div></section>";
 
-    html += '<section id="posts" class="flex flex-col gap-5 pt-16" style="scroll-margin-top:90px">' +
-      '<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">' +
-      '<div><span class="eyebrow">Topics</span><h2 class="display section-title">All assignments</h2></div>' +
-      '<label class="relative block w-full md:w-72"><span class="sr-only">Search posts</span>' +
-      '<svg class="absolute left-3.5 top-1/2 -translate-y-1/2 muted" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +
-      '<input id="search" class="search" type="search" placeholder="Search assignments" value="' + esc(state.query) + '"></label></div>' +
-      '<div class="filters" role="group" aria-label="Filter by topic">' +
-      '<button type="button" class="chip" data-filter="all" aria-pressed="' + (state.filter === "all") + '">All Posts <span class="count">' + posts.length + "</span></button>" +
+    // Assignments
+    h += '<section class="section alt" id="posts" style="scroll-margin-top:48px"><div class="container">' +
+      '<div class="section-head"><div><h2 class="section-title">All assignments.</h2><p class="section-sub">Newest first. Filter by topic or search.</p></div></div>' +
+      '<div class="toolbar"><div class="filters" role="group" aria-label="Filter by topic">' +
+      '<button type="button" class="chip-btn" data-filter="all" aria-pressed="' + (state.filter === "all") + '">All</button>' +
       (d.categories || []).map(function (c) {
-        return '<button type="button" class="chip" data-filter="' + slug(c) + '" aria-pressed="' + (state.filter === slug(c)) + '"><span class="dot" style="--topic:' + topicVar(c) + '"></span>' + esc(c) + ' <span class="count">' + (counts[c] || 0) + "</span></button>";
+        return '<button type="button" class="chip-btn" data-filter="' + slug(c) + '" aria-pressed="' + (state.filter === slug(c)) + '">' + esc(c) + "</button>";
       }).join("") + "</div>" +
-      '<div id="post-list"></div></section>';
+      '<label class="search-wrap"><span class="sr-only">Search assignments</span><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +
+      '<input id="search" class="search" type="search" placeholder="Search" value="' + esc(state.query) + '"></label></div>' +
+      '<div id="post-list"></div></div></section>';
 
-    app.innerHTML = html;
+    // Topics
+    var desc = d.topicDescriptions || {}, imgs = d.topicImages || {};
+    h += '<section class="section" id="topics" style="scroll-margin-top:48px"><div class="container">' +
+      '<div class="section-head"><div><h2 class="section-title">Topics.</h2><p class="section-sub">The eight areas of our Economics curriculum.</p></div></div>' +
+      '<div class="topic-rail">' + (d.categories || []).map(function (c) {
+        var img = imgs[c];
+        return '<a class="topic-card' + (img ? " has-img" : "") + '" href="#topic-' + slug(c) + '">' + (img ? '<img src="' + esc(img) + '" alt="" loading="lazy">' : "") +
+          '<span class="count">' + (counts[c] || 0) + (counts[c] === 1 ? " post" : " posts") + "</span><h3>" + esc(c) + "</h3><p>" + esc(desc[c] || "") + "</p></a>";
+      }).join("") + "</div></div></section>";
+
+    // Glossary
+    h += '<section class="section alt" id="glossary" style="scroll-margin-top:48px"><div class="container">' +
+      '<div class="section-head"><div><h2 class="section-title">Glossary.</h2><p class="section-sub">Every key term from my assignments, explained in one sentence.</p></div></div>' +
+      '<div class="glossary-tools"><label class="search-wrap"><span class="sr-only">Search the glossary</span><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +
+      '<input id="glossary-search" class="search" type="search" placeholder="Search terms, e.g. GDP" value="' + esc(state.glossaryQuery) + '"></label><span class="glossary-count" id="glossary-count"></span></div>' +
+      '<dl class="glossary" id="glossary-list"></dl></div></section>';
+
+    // Timeline
+    var tl = all.slice();
+    h += '<section class="section" id="timeline" style="scroll-margin-top:48px"><div class="container">' +
+      '<div class="section-head" style="justify-content:center;text-align:center"><div><h2 class="section-title">The school year so far.</h2><p class="section-sub" style="margin-inline:auto">' + esc("School year " + (site.schoolYear || "")) + "</p></div></div>" +
+      '<div class="timeline">' + tl.map(function (p) {
+        var parts = String(p.date).split("-"), day = parseInt(parts[2], 10), mon = MONTHS[parseInt(parts[1], 10) - 1] || "";
+        return '<a class="tl-item" href="#post-' + esc(p.id) + '"><div class="tl-date"><b>' + (day || "") + "</b>" + mon.slice(0, 3) + " " + parts[0] + "</div>" +
+          "<div><h3>" + esc(p.title) + "</h3><p>" + esc((p.categories || []).join(" · ")) + " · " + formatLabel(p) + "</p></div></a>";
+      }).join("") + "</div></div></section>";
+
+    // About
+    h += '<section class="section alt" id="about" style="scroll-margin-top:48px"><div class="container about">' +
+      '<div><h2 class="section-title">About.</h2><div class="prose" style="margin-top:24px">' + markdown(site.about || "") + "</div></div>" +
+      '<dl class="facts">' +
+      (site.author ? "<div><dt>Student</dt><dd>" + esc(site.author) + "</dd></div>" : "") +
+      (schoolLine ? "<div><dt>School</dt><dd>" + esc(schoolLine) + "</dd></div>" : "") +
+      (site.schoolYear ? "<div><dt>School year</dt><dd>" + esc(site.schoolYear) + "</dd></div>" : "") +
+      "<div><dt>Subject</dt><dd>" + esc(site.subject || "Economics") + "</dd></div>" +
+      "<div><dt>Assignments</dt><dd>" + all.length + "</dd></div></dl></div></section>";
+
+    app.innerHTML = h;
     renderList();
+    renderGlossary();
 
     app.querySelectorAll("[data-filter]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        var f = btn.getAttribute("data-filter");
-        try { history.replaceState(null, "", f === "all" ? location.pathname + location.search : "#topic-" + f); } catch (e) {}
-        state.filter = f;
+        state.filter = btn.getAttribute("data-filter");
         app.querySelectorAll("[data-filter]").forEach(function (b) { b.setAttribute("aria-pressed", String(b === btn)); });
         renderList();
       });
     });
     document.getElementById("search").addEventListener("input", function (e) { state.query = e.target.value; renderList(); });
+    document.getElementById("glossary-search").addEventListener("input", function (e) { state.glossaryQuery = e.target.value; renderGlossary(); });
+    setupReveal();
   }
+
+  function stat(n, label) { return '<div class="stat"><div class="num" data-count="' + n + '">' + n + '</div><div class="lbl">' + esc(label) + "</div></div>"; }
 
   function renderList() {
     var list = document.getElementById("post-list");
     if (!list) return;
     var q = state.query.trim().toLowerCase();
-    var posts = sortedPosts().filter(function (p) {
+    var res = posts().filter(function (p) {
       var inCat = state.filter === "all" || (p.categories || []).some(function (c) { return slug(c) === state.filter; });
       var hay = (p.title + " " + (p.excerpt || "") + " " + (p.categories || []).join(" ")).toLowerCase();
       return inCat && (!q || hay.indexOf(q) > -1);
     });
-    if (!posts.length) {
-      var cat = (state.data.categories || []).filter(function (c) { return slug(c) === state.filter; })[0];
-      list.innerHTML = '<div class="empty"><div class="display" style="font-size:1.2rem;font-weight:700;color:var(--ink)">No assignments here yet</div>' +
-        "<p>" + (q ? "Nothing matches “" + esc(state.query) + "”." : "Posts about " + esc(cat || "this topic") + " will appear here.") + "</p></div>";
+    if (!res.length) {
+      list.innerHTML = '<div class="empty"><strong>No assignments here yet</strong>' + (q ? "Nothing matches “" + esc(state.query) + "”." : "Posts for this topic will appear here.") + "</div>";
       return;
     }
     var groups = [], seen = {};
-    posts.forEach(function (p) {
+    res.forEach(function (p) {
       var key = String(p.date).slice(0, 7);
       if (!seen[key]) { seen[key] = { key: key, posts: [] }; groups.push(seen[key]); }
       seen[key].posts.push(p);
     });
     list.innerHTML = groups.map(function (g) {
-      return '<div class="month-group"><div class="month-label"><span class="display">' + formatDate(g.key) + '</span><span class="mono muted">' + g.posts.length + (g.posts.length === 1 ? " post" : " posts") + "</span></div>" + cardsHtml(g.posts) + "</div>";
+      return '<div><div class="month-label">' + formatDate(g.key) + "<span>" + g.posts.length + (g.posts.length === 1 ? " post" : " posts") + "</span></div>" +
+        '<div class="tiles">' + g.posts.map(tile).join("") + "</div></div>";
     }).join("");
   }
 
-  function cardsHtml(posts) {
-    return '<div class="grid-posts">' + posts.map(function (p) {
-      return '<a class="card" href="#post-' + esc(p.id) + '"><div class="flex flex-wrap gap-2">' + tags(p.categories) + "</div>" +
-        "<h3>" + esc(p.title) + "</h3><p>" + esc(p.excerpt || "") + "</p>" +
-        '<div class="card-meta"><span class="mono">' + formatDate(p.date) + "</span><span style=\"flex:1\"></span>" + formatIcons(p) + "</div></a>";
-    }).join("") + "</div>";
+  function tile(p) {
+    return '<a class="tile" href="#post-' + esc(p.id) + '">' + cover(p) +
+      '<div class="tile-body"><div class="tile-topics">' + esc((p.categories || []).join(" · ")) + "</div><h3>" + esc(p.title) + "</h3><p>" + esc(p.excerpt || "") + "</p>" +
+      '<div class="tile-meta"><span>' + formatDate(p.date) + "</span><span>" + formatLabel(p) + "</span></div></div></a>";
   }
 
+  function renderGlossary() {
+    var el = document.getElementById("glossary-list");
+    if (!el) return;
+    var q = state.glossaryQuery.trim().toLowerCase();
+    var terms = (state.data.glossary || []).slice().sort(function (a, b) { return a.term.localeCompare(b.term); }).filter(function (t) {
+      return !q || (t.term + " " + t.definition).toLowerCase().indexOf(q) > -1;
+    });
+    document.getElementById("glossary-count").textContent = terms.length + (terms.length === 1 ? " term" : " terms");
+    el.innerHTML = terms.length ? terms.map(function (t) {
+      var p = t.post && postById(t.post);
+      return '<div class="term"><dt>' + esc(t.term) + "</dt><dd>" + esc(t.definition) + "</dd>" + (p ? '<a href="#post-' + esc(p.id) + '">From: ' + esc(p.title) + "</a>" : "") + "</div>";
+    }).join("") : '<div class="term" style="grid-column:1/-1"><dt>No matching term</dt><dd>Try another word.</dd></div>';
+  }
+
+  /* ---------- post ---------- */
   function renderPost(id) {
-    var post = (state.data.posts || []).filter(function (p) { return p.id === id; })[0];
-    if (!post) { renderNotFound(); return; }
-    document.title = post.title + " · " + (state.data.site.title || "Economics Portfolio");
-    app.innerHTML = '<article class="article">' +
-      '<a class="back-link" href="#posts"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>All assignments</a>' +
-      '<div class="flex flex-wrap gap-2 mt-8">' + tags(post.categories, true) + "</div>" +
-      "<h1>" + esc(post.title) + "</h1>" +
-      (post.excerpt ? '<p class="article-lead">' + esc(post.excerpt) + "</p>" : "") +
-      '<div class="flex flex-wrap items-center gap-3 mt-5 muted"><span class="mono">' + formatDate(post.date) + '</span><span class="mono">·</span><span class="mono">' + readingTime(post) + " min read</span>" + (state.data.site.schoolYear ? '<span class="mono">·</span><span class="mono">School year ' + esc(state.data.site.schoolYear) + "</span>" : "") + formatIcons(post) + "</div>" +
-      '<div class="article-body">' + (post.blocks || []).map(renderBlock).join("") + "</div></article>";
-    wireVideos(app);
+    var post = postById(id);
+    if (!post) { app.innerHTML = '<div class="container"><div class="empty" style="margin-block:96px"><strong>Post not found</strong><a class="link" href="#">Back to the start page</a></div></div>'; return; }
+    document.title = post.title + " · " + (state.data.site.title || "Economics");
+    quizCount = 0;
+    var all = posts(), i = all.indexOf(post), newer = all[i - 1], older = all[i + 1];
+    var showCover = post.coverArt || (post.cover && !hasVideo(post));
+    app.innerHTML = '<article><header class="article-head container"><a class="back" href="#posts">All assignments</a>' +
+      '<div class="tile-topics">' + esc((post.categories || []).join(" · ")) + "</div><h1>" + esc(post.title) + "</h1>" +
+      (post.excerpt ? '<p class="lead">' + esc(post.excerpt) + "</p>" : "") +
+      '<div class="meta">' + formatDate(post.date) + " · " + readingTime(post) + " min read" + (state.data.site.schoolYear ? " · School year " + esc(state.data.site.schoolYear) : "") + "</div></header>" +
+      (showCover ? '<div class="article-cover container">' + cover(post) + "</div>" : "") +
+      '<div class="article-body container">' + (post.blocks || []).map(renderBlock).join("") + "</div></article>" +
+      '<nav class="post-nav container" aria-label="More assignments">' +
+      (older ? '<a href="#post-' + esc(older.id) + '"><span>‹ Older</span><h4>' + esc(older.title) + "</h4></a>" : "<div></div>") +
+      (newer ? '<a class="next" href="#post-' + esc(newer.id) + '"><span>Newer ›</span><h4>' + esc(newer.title) + "</h4></a>" : "<div></div>") + "</nav>";
+    wireBlocks(app);
     window.scrollTo(0, 0);
   }
 
-  function renderAbout() {
+  /* ---------- interactions ---------- */
+  function setupReveal() {
+    if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var vh = window.innerHeight;
+
+    // Count-up numbers
+    var nums = app.querySelectorAll("[data-count]");
+    var io2 = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        io2.unobserve(e.target);
+        var target = parseInt(e.target.getAttribute("data-count"), 10), start = performance.now();
+        (function step(now) {
+          var k = Math.min(1, (now - start) / 900);
+          e.target.textContent = Math.round(target * (1 - Math.pow(1 - k, 3)));
+          if (k < 1) requestAnimationFrame(step);
+        })(start);
+      });
+    }, { threshold: 0.5 });
+    nums.forEach(function (n) { if (n.getBoundingClientRect().top > vh) io2.observe(n); });
+  }
+
+  function setupChrome() {
     var site = state.data.site || {};
-    app.innerHTML = '<section class="about"><span class="eyebrow">About</span>' +
-      '<h1 class="display" style="font-size:clamp(2rem,4.4vw,2.8rem);font-weight:800;line-height:1.05;margin-block:10px 18px">About this portfolio</h1>' +
-      '<div class="prose">' + markdown(site.about || [
-        "This website collects my assignments for **Economics** class: articles, filmed interviews, podcasts and presentations.",
-        "",
-        "Posts are sorted by topic, from how markets and money work to business cycles, sustainability, Europe and the global economy. Excursions and events get their own category."
-      ]) + "</div></section>";
-    window.scrollTo(0, 0);
-  }
-
-  function renderNotFound() {
-    app.innerHTML = '<div class="empty" style="margin-block:64px"><div class="display" style="font-size:1.4rem;font-weight:700;color:var(--ink)">Post not found</div><p><a href="#" style="color:var(--accent)">Back to all assignments</a></p></div>';
-  }
-
-  /* ---------- navigation ---------- */
-  function buildMenus() {
-    var cats = state.data.categories || [];
-    var items = cats.map(function (c) {
-      return '<a href="#topic-' + slug(c) + '"><span class="flex items-center gap-2"><span class="dot" style="--topic:' + topicVar(c) + '"></span>' + esc(c) + "</span></a>";
-    }).join("");
-    document.getElementById("topics-dropdown").innerHTML = '<a href="#topic-all"><span>All Posts</span></a>' + items;
-    document.querySelector("#mobile-menu .wrap").innerHTML =
-      '<a href="#">Posts</a><a href="#about">About</a><div class="eyebrow group-label">Topics</div><a href="#topic-all">All Posts</a>' + items;
-
-    var btn = document.getElementById("topics-btn"), dd = document.getElementById("topics-dropdown");
-    btn.addEventListener("click", function (e) { e.stopPropagation(); dd.hidden = !dd.hidden; btn.setAttribute("aria-expanded", String(!dd.hidden)); });
-    document.addEventListener("click", function () { dd.hidden = true; btn.setAttribute("aria-expanded", "false"); });
+    var t = site.title || "Economics";
+    document.getElementById("site-title").textContent = t;
+    document.getElementById("footer-title").textContent = t;
+    document.getElementById("footer-meta").textContent = [site.school && site.school + (site.city ? ", " + site.city : ""), site.schoolYear && "School year " + site.schoolYear].filter(Boolean).join(" · ");
+    document.getElementById("footer-topics").innerHTML = (state.data.categories || []).map(function (c) { return '<a href="#topic-' + slug(c) + '">' + esc(c) + "</a>"; }).join("");
 
     var mb = document.getElementById("menu-btn"), mm = document.getElementById("mobile-menu");
     mb.addEventListener("click", function () { mm.hidden = !mm.hidden; mb.setAttribute("aria-expanded", String(!mm.hidden)); });
     mm.addEventListener("click", function (e) { if (e.target.closest("a")) { mm.hidden = true; mb.setAttribute("aria-expanded", "false"); } });
+
+    var root = document.documentElement, saved = null;
+    try { saved = localStorage.getItem("theme"); } catch (e) {}
+    if (saved) root.setAttribute("data-theme", saved);
+    document.getElementById("theme-btn").addEventListener("click", function () {
+      var cur = root.getAttribute("data-theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      var next = cur === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem("theme", next); } catch (e) {}
+    });
+
+    var bar = document.getElementById("progress");
+    window.addEventListener("scroll", function () {
+      if (!/^#post-/.test(location.hash)) { bar.style.transform = "scaleX(0)"; return; }
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.transform = "scaleX(" + (max > 0 ? Math.min(1, window.scrollY / max) : 0) + ")";
+    }, { passive: true });
   }
 
+  var SECTIONS = ["posts", "topics", "glossary", "timeline", "about"];
   function route() {
     var h = decodeURIComponent(location.hash.replace(/^#/, ""));
-    document.title = (state.data.site && state.data.site.title) || "Economics Portfolio";
-    document.querySelectorAll("[data-nav]").forEach(function (a) { a.removeAttribute("aria-current"); });
+    document.title = (state.data.site && state.data.site.title) || "Economics";
     if (h.indexOf("post-") === 0) { renderPost(h.slice(5)); return; }
-    if (h === "about") { document.querySelector('[data-nav="about"]').setAttribute("aria-current", "page"); renderAbout(); return; }
-    document.querySelector('[data-nav="home"]').setAttribute("aria-current", "page");
-    var scrollToPosts = h === "posts" || h.indexOf("topic-") === 0;
-    if (h.indexOf("topic-") === 0) state.filter = h.slice(6) || "all";
-    renderHome();
-    if (scrollToPosts) {
-      var el = document.getElementById("posts");
-      if (el) el.scrollIntoView();
-    } else { window.scrollTo(0, 0); }
+    var target = null;
+    if (h.indexOf("topic-") === 0) { state.filter = h.slice(6) || "all"; if (state.filter === "all") state.filter = "all"; target = "posts"; }
+    else if (SECTIONS.indexOf(h) > -1) target = h;
+    if (!document.getElementById("posts")) renderHome();
+    else {
+      app.querySelectorAll("[data-filter]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-filter") === state.filter)); });
+      renderList();
+    }
+    if (target) { var el = document.getElementById(target); if (el) el.scrollIntoView(); }
+    else window.scrollTo(0, 0);
+    document.getElementById("progress").style.transform = "scaleX(0)";
   }
 
   function start(data) {
     state.data = data;
-    var t = (data.site && data.site.title) || "Economics Portfolio";
-    document.getElementById("site-title").textContent = t;
-    var site = data.site || {};
-    document.getElementById("footer-title").textContent = t;
-    document.getElementById("footer-meta").textContent = [site.school && (site.school + (site.city ? ", " + site.city : "")), site.schoolYear && "School year " + site.schoolYear].filter(Boolean).join(" · ") || "Economics class";
-    buildMenus();
+    setupChrome();
     route();
-    window.addEventListener("hashchange", route);
+    window.addEventListener("hashchange", function () {
+      if (/^#post-/.test(location.hash) || !document.getElementById("posts")) app.innerHTML = "";
+      route();
+    });
   }
 
   fetch("posts.json", { cache: "no-store" })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(start)
     .catch(function (err) {
-      app.innerHTML = '<div class="empty" style="margin-block:64px"><div class="display" style="font-size:1.3rem;font-weight:700;color:var(--ink)">The posts could not be loaded</div>' +
-        "<p>Open the site through a local server (double-click <code>start-preview</code>) instead of opening index.html directly. If you just edited posts.json, check it for a missing comma or quote.</p></div>";
+      app.innerHTML = '<div class="container"><div class="empty" style="margin-block:96px"><strong>The posts could not be loaded</strong>' +
+        "Open the site through a local server (double-click start-preview) instead of opening index.html directly.</div></div>";
       console.error(err);
     });
 })();

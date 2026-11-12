@@ -5,46 +5,64 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Economics with Soma Korcsog</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Economics blog and portfolio: school assignments, interviews, podcasts and presentations.">
+<meta name="description" content="Economics portfolio of Soma Korcsog, school year 2026/2027: assignments, videos, interviews and excursions.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap">
 <script src="https://cdn.tailwindcss.com/3.4.16"></script>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<header class="site-header">
-  <div class="wrap flex items-center justify-between gap-4 h-16">
-    <a href="#" class="brand" id="brand-link" aria-label="Home">
-      <span class="brand-mark" aria-hidden="true">SK</span>
-      <span id="site-title">Economics with Soma Korcsog</span>
-    </a>
-    <nav class="hidden md:flex items-center gap-1" aria-label="Main">
-      <a href="#" class="nav-link" data-nav="home">Posts</a>
-      <div class="relative" id="topics-menu">
-        <button type="button" class="nav-link flex items-center gap-1" id="topics-btn" aria-expanded="false" aria-controls="topics-dropdown">
-          Topics
-          <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-        </button>
-        <div class="dropdown" id="topics-dropdown" hidden></div>
-      </div>
-      <a href="#about" class="nav-link" data-nav="about">About</a>
-    </nav>
-    <button type="button" class="md:hidden icon-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
-      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-    </button>
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand" id="site-title">Economics with Soma Korcsog</a>
+    <div class="nav-right">
+      <nav class="nav-links" aria-label="Main">
+        <a href="#posts">Assignments</a>
+        <a href="#topics">Topics</a>
+        <a href="#glossary">Glossary</a>
+        <a href="#timeline">Timeline</a>
+        <a href="#about">About</a>
+      </nav>
+      <button type="button" class="icon-btn" id="theme-btn" aria-label="Switch between light and dark mode">
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg>
+      </button>
+      <button type="button" class="icon-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 6h14M2 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
   </div>
-  <div class="mobile-menu md:hidden" id="mobile-menu" hidden>
-    <div class="wrap flex flex-col gap-1 py-3"></div>
+  <div class="progress" id="progress"></div>
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <a href="#posts">Assignments</a>
+    <a href="#topics">Topics</a>
+    <a href="#glossary">Glossary</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#about">About</a>
   </div>
 </header>
 
-<main id="app" class="wrap" tabindex="-1"></main>
+<main id="app" tabindex="-1"></main>
 
-<footer class="site-footer">
-  <div class="wrap flex flex-col sm:flex-row gap-2 justify-between py-8">
-    <span id="footer-title">Economics with Soma Korcsog</span>
-    <span class="mono" id="footer-meta">Economics class · School year 2026/2027</span>
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>
+      <div class="footer-title" id="footer-title">Economics with Soma Korcsog</div>
+      <p class="footer-meta" id="footer-meta">Economics class · School year 2026/2027</p>
+    </div>
+    <div>
+      <div class="footer-head">Topics</div>
+      <div class="footer-links" id="footer-topics"></div>
+    </div>
+    <div>
+      <div class="footer-head">Portfolio</div>
+      <div class="footer-links">
+        <a href="#posts">All assignments</a>
+        <a href="#glossary">Glossary</a>
+        <a href="#timeline">Timeline</a>
+        <a href="#about">About</a>
+      </div>
+    </div>
   </div>
 </footer>
 

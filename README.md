@@ -29,13 +29,17 @@ Unterstützte Bausteine (`blocks`):
 | `text` | `content` | Text mit **fett**, _kursiv_, Listen, ### Überschriften |
 | `heading` | `text` | Große Abschnittsüberschrift |
 | `notes` | `label`, `content` | Hervorgehobener Notizkasten |
-| `video` | `src`, `title`, `caption`, `poster` | MP4-Datei aus `media/` |
+| `video` | `src`, `title`, `caption`, `poster`, `portrait` | MP4-Datei aus `media/` (`portrait: true` für Hochformat) |
 | `youtube` | `url`, `caption` | YouTube-Link |
 | `audio` | `src`, `title`, `caption` | MP3 / Podcast |
 | `pdf` | `src`, `title` | PDF eingebettet |
 | `slides` | `url`, `title` | Google Slides oder Canva |
 | `image` | `src`, `caption` | Bild |
+| `gallery` | `images` (Liste mit `src`, `caption`) | Bildergalerie mit Vergrößern |
+| `quiz` | `title`, `questions` (`q`, `options`, `answer`, `explain`) | Interaktives Quiz |
 | `quote` | `content`, `author` | Zitat |
 | `link` | `url`, `text` | Button mit Link |
 
 Kategorien: Introduction, Markets, Money, Business Cycles, Sustainability, Europe, International, Excursions & Events.
+
+Weitere Felder pro Beitrag: `cover` (Titelbild) oder `coverArt` (`big`, `small`, `tone`: navy, graphite, sand, green, red, sky). Begriffe für das Glossar stehen unter `glossary`.

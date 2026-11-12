@@ -6,7 +6,14 @@
     "city": "Vienna",
     "schoolYear": "2026/2027",
     "subject": "Economics",
-    "intro": "Assignments, interviews, podcasts and presentations from my Economics class. Markets, money, business cycles and what we learned outside the classroom."
+    "intro": "Assignments, interviews, podcasts and presentations from my Economics class. Markets, money, business cycles and what we learned outside the classroom.",
+    "about": [
+      "Hi, I'm **Soma**. This is my portfolio for Economics class in the school year 2026/2027.",
+      "",
+      "Here I collect everything we do in class and outside of it: team assignments, short explainer videos, interviews and notes from excursions to places like WU Vienna, the Austrian National Bank and the GEWINN fair.",
+      "",
+      "Every post belongs to one or more topics from our curriculum, from how markets and money work to business cycles, Europe and the global economy."
+    ]
   },
   "categories": [
     "Introduction",
@@ -78,8 +85,49 @@
             "- **Shell company:** a company that exists only on paper and has no real business activity.",
             "- **Whistleblower:** an employee who reports wrongdoing inside their own organisation."
           ]
+        },
+        {
+          "type": "quiz",
+          "title": "Test yourself",
+          "questions": [
+            {
+              "q": "Roughly how much money flowed through Danske Bank's small Estonian branch?",
+              "options": [
+                "€2 billion",
+                "€20 billion",
+                "€200 billion"
+              ],
+              "answer": 2,
+              "explain": "Around €200 billion passed through the branch between 2007 and 2015."
+            },
+            {
+              "q": "What is a shell company?",
+              "options": [
+                "A company that only exists on paper",
+                "A company that sells seafood",
+                "A state-owned bank"
+              ],
+              "answer": 0,
+              "explain": "Shell companies have no real business, which makes them useful for hiding where money comes from."
+            },
+            {
+              "q": "Who helped uncover the case?",
+              "options": [
+                "A journalist",
+                "A manager inside the bank",
+                "The European Central Bank"
+              ],
+              "answer": 1,
+              "explain": "Howard Wilkinson, a manager at the bank, reported his suspicions in 2013."
+            }
+          ]
         }
-      ]
+      ],
+      "coverArt": {
+        "big": "€200 bn",
+        "small": "through one small bank branch in Estonia",
+        "tone": "graphite"
+      }
     },
     {
       "id": "memecoins-explained",
@@ -125,8 +173,39 @@
         {
           "type": "quote",
           "content": "Hype is not a strategy."
+        },
+        {
+          "type": "quiz",
+          "title": "Test yourself",
+          "questions": [
+            {
+              "q": "What usually drives the price of a memecoin?",
+              "options": [
+                "Company profits",
+                "Hype and trends",
+                "Interest rates"
+              ],
+              "answer": 1,
+              "explain": "Memecoins are mostly speculation. When the hype is over, prices often crash."
+            },
+            {
+              "q": "How many bitcoins can ever exist?",
+              "options": [
+                "21 million",
+                "100 million",
+                "There is no limit"
+              ],
+              "answer": 0,
+              "explain": "Bitcoin's supply is capped at 21 million coins."
+            }
+          ]
         }
-      ]
+      ],
+      "coverArt": {
+        "big": "21 M",
+        "small": "Bitcoin's limit. Memecoins have none.",
+        "tone": "sand"
+      }
     },
     {
       "id": "gewinn-fair-2026",
@@ -269,7 +348,12 @@
             "_Add your own opinion here: which talk did you find most useful, and do you agree with Hörhan's advice?_"
           ]
         }
-      ]
+      ],
+      "coverArt": {
+        "big": "GEWINN",
+        "small": "Three talks, one afternoon",
+        "tone": "green"
+      }
     },
     {
       "id": "wu-vienna-fma-breakfast",
@@ -335,7 +419,12 @@
             "_Which warning signs of financial fraud do you remember, and why are young people a target?_"
           ]
         }
-      ]
+      ],
+      "coverArt": {
+        "big": "WU × FMA",
+        "small": "3rd Financial Education Breakfast",
+        "tone": "navy"
+      }
     },
     {
       "id": "how-the-economy-works",
@@ -347,7 +436,7 @@
         "Business Cycles"
       ],
       "excerpt": "Our whiteboard explainer video: from wants and resources to the circular flow of income, supply and demand, GDP, the business cycle, and the role of jobs, banks, politics and trade.",
-      "cover": "media/how-the-economy-works.jpg",
+      "cover": "media/wb-supply-demand.jpg",
       "blocks": [
         {
           "type": "text",
@@ -360,7 +449,8 @@
           "src": "media/how-the-economy-works.mp4",
           "poster": "media/how-the-economy-works.jpg",
           "title": "How does the economy work?",
-          "caption": "Whiteboard explainer video, 10 October 2026."
+          "caption": "Whiteboard explainer video, 10 October 2026.",
+          "portrait": true
         },
         {
           "type": "heading",
@@ -377,6 +467,67 @@
             "5. **Business cycle & inflation:** expansion, peak and recession, and how prices rise.",
             "6. **Jobs, banks, politics & trade:** the actors that keep the economy running."
           ]
+        },
+        {
+          "type": "gallery",
+          "images": [
+            {
+              "src": "media/wb-wants.jpg",
+              "caption": "Wants & resources"
+            },
+            {
+              "src": "media/wb-circular-flow.jpg",
+              "caption": "Circular flow of income"
+            },
+            {
+              "src": "media/wb-supply-demand.jpg",
+              "caption": "Supply & demand"
+            },
+            {
+              "src": "media/wb-gdp.jpg",
+              "caption": "Systems & GDP"
+            },
+            {
+              "src": "media/wb-cycle.jpg",
+              "caption": "Business cycle & inflation"
+            }
+          ]
+        },
+        {
+          "type": "quiz",
+          "title": "Test yourself",
+          "questions": [
+            {
+              "q": "What does the G in GDP = C + I + G + (X − M) stand for?",
+              "options": [
+                "Growth",
+                "Government spending",
+                "Gold reserves"
+              ],
+              "answer": 1,
+              "explain": "C is consumer spending, I investment, G government spending, X exports and M imports."
+            },
+            {
+              "q": "What happens at the market equilibrium?",
+              "options": [
+                "Supply equals demand",
+                "Prices are always zero",
+                "The government sets the price"
+              ],
+              "answer": 0,
+              "explain": "At equilibrium the quantity supplied equals the quantity demanded."
+            },
+            {
+              "q": "Which phase comes after the peak of a business cycle?",
+              "options": [
+                "Expansion",
+                "Recession",
+                "Recovery"
+              ],
+              "answer": 1,
+              "explain": "After the peak, the economy slows down and can fall into a recession."
+            }
+          ]
         }
       ]
     },
@@ -390,7 +541,7 @@
         "International",
         "Money"
       ],
-      "excerpt": "Panel discussion at the Austrian National Bank (OeNB): are competitiveness, prosperity and quality of life the same thing? We also talked about the digital euro, China, hidden champions and the crisis in France.",
+      "excerpt": "Panel discussion at the Austrian National Bank (OeNB) on competitiveness, prosperity and quality of life. I prepared four questions and got to ask the panel mine about the digital euro.",
       "blocks": [
         {
           "type": "text",
@@ -427,6 +578,31 @@
         },
         {
           "type": "heading",
+          "text": "My questions for the panel",
+          "id": "my-questions"
+        },
+        {
+          "type": "notes",
+          "label": "The question I asked live",
+          "id": "my-questions",
+          "content": [
+            "### I got to ask this question to the panel",
+            "> When I pay with cash, I stay anonymous. Is there a concrete legal guarantee that the digital euro will not become a tool that makes every payment fully traceable, including by future governments?"
+          ]
+        },
+        {
+          "type": "text",
+          "id": "my-questions",
+          "content": [
+            "I also prepared three more questions:",
+            "",
+            "2. Austria's GDP per capita is high, but many people still feel poorer. Does GDP still measure what people actually experience as prosperity, such as housing costs, time and health?",
+            "3. If you had one sentence for young people in training or an apprenticeship today: will they be better off in Austria in 20 years than their parents? And what has to happen in the next few years for that?",
+            "4. AI and digitalisation bring productivity, but also more surveillance and fewer jobs in some areas. How do you make sure the gains in prosperity reach people and not only big companies?"
+          ]
+        },
+        {
+          "type": "heading",
           "text": "What we discussed"
         },
         {
@@ -452,7 +628,139 @@
             "_Add your opinion here: is quality of life more important than economic growth? Would you use a digital euro?_"
           ]
         }
-      ]
+      ],
+      "coverArt": {
+        "big": "OeNB",
+        "small": "Competitiveness, prosperity, quality of life",
+        "tone": "red"
+      }
+    }
+  ],
+  "topicImages": {
+    "Introduction": "media/wb-wants.jpg",
+    "Markets": "media/wb-supply-demand.jpg",
+    "Business Cycles": "media/wb-cycle.jpg"
+  },
+  "glossary": [
+    {
+      "term": "Bitcoin",
+      "definition": "The first cryptocurrency. Its supply is limited to 21 million coins, so many people call it digital gold.",
+      "post": "memecoins-explained"
+    },
+    {
+      "term": "Business cycle",
+      "definition": "The ups and downs of an economy over time: expansion, peak, recession and recovery.",
+      "post": "how-the-economy-works"
+    },
+    {
+      "term": "Circular flow of income",
+      "definition": "A model of how money, goods, services and work flow between households and firms.",
+      "post": "how-the-economy-works"
+    },
+    {
+      "term": "Competitiveness",
+      "definition": "How well a country's companies can sell their products against foreign competitors.",
+      "post": "oenb-debate-competitiveness"
+    },
+    {
+      "term": "Consumer sentiment",
+      "definition": "How optimistic or pessimistic people feel about the economy and their own finances.",
+      "post": "gewinn-fair-2026"
+    },
+    {
+      "term": "Digital euro",
+      "definition": "A planned digital form of cash issued by the European Central Bank, usable for everyday payments.",
+      "post": "oenb-debate-competitiveness"
+    },
+    {
+      "term": "Dividend",
+      "definition": "The part of a company's profit that is paid out to its shareholders.",
+      "post": "gewinn-fair-2026"
+    },
+    {
+      "term": "FMA",
+      "definition": "Austria's Financial Market Authority. It supervises banks, insurers and financial markets and warns about fraud.",
+      "post": "wu-vienna-fma-breakfast"
+    },
+    {
+      "term": "Financial fraud",
+      "definition": "Tricking people out of money, for example with fake investments or promises of quick, high profits.",
+      "post": "wu-vienna-fma-breakfast"
+    },
+    {
+      "term": "GDP",
+      "definition": "Gross domestic product: the value of all goods and services produced in a country in one year. GDP = C + I + G + (X − M).",
+      "post": "how-the-economy-works"
+    },
+    {
+      "term": "Hidden champions",
+      "definition": "Companies few people know that are world market leaders in a small niche. Austria has many of them.",
+      "post": "oenb-debate-competitiveness"
+    },
+    {
+      "term": "Inflation",
+      "definition": "A general rise in prices, which means money loses purchasing power.",
+      "post": "how-the-economy-works"
+    },
+    {
+      "term": "Interest rate",
+      "definition": "The price of borrowing money, shown as a percentage per year.",
+      "post": "gewinn-fair-2026"
+    },
+    {
+      "term": "Market equilibrium",
+      "definition": "The price at which the quantity supplied equals the quantity demanded.",
+      "post": "how-the-economy-works"
+    },
+    {
+      "term": "Memecoin",
+      "definition": "A cryptocurrency based on an internet joke or trend. Its price mostly depends on hype.",
+      "post": "memecoins-explained"
+    },
+    {
+      "term": "Money laundering",
+      "definition": "Making money from crime look like it comes from a legal source.",
+      "post": "money-laundering-danske-bank"
+    },
+    {
+      "term": "OeNB",
+      "definition": "Oesterreichische Nationalbank, Austria's central bank and part of the Eurosystem.",
+      "post": "oenb-debate-competitiveness"
+    },
+    {
+      "term": "Productivity",
+      "definition": "How much output a worker produces in a given time.",
+      "post": "gewinn-fair-2026"
+    },
+    {
+      "term": "Recession",
+      "definition": "A period when the economy shrinks, GDP falls and unemployment usually rises.",
+      "post": "how-the-economy-works"
+    },
+    {
+      "term": "Scarcity",
+      "definition": "People's wants are unlimited, but resources like time, money and raw materials are limited.",
+      "post": "how-the-economy-works"
+    },
+    {
+      "term": "Shell company",
+      "definition": "A company that exists only on paper and has no real business activity.",
+      "post": "money-laundering-danske-bank"
+    },
+    {
+      "term": "Speculation",
+      "definition": "Buying something only because you hope its price will rise quickly, not because of its real value.",
+      "post": "memecoins-explained"
+    },
+    {
+      "term": "Supply and demand",
+      "definition": "The basic market model: prices change until what sellers offer matches what buyers want.",
+      "post": "how-the-economy-works"
+    },
+    {
+      "term": "Whistleblower",
+      "definition": "An employee who reports wrongdoing inside their own organisation.",
+      "post": "money-laundering-danske-bank"
     }
   ]
 }
