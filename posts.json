@@ -12,7 +12,7 @@
       "",
       "Here I collect everything we do in class and outside of it: team assignments, short explainer videos, interviews and notes from excursions to places like WU Vienna, the Austrian National Bank and the GEWINN fair.",
       "",
-      "Every post belongs to one or more topics from our curriculum, from how markets and money work to business cycles, Europe and the global economy."
+      "Every post belongs to one or more topics from our curriculum, from how markets and money work to business cycles and the global economy."
     ],
     "feedbackEndpoint": "https://formsubmit.co/ajax/somakorcsog1@gmail.com"
   },
@@ -838,6 +838,10 @@
       {
         "label": "Navigation",
         "text": "Take \"How it was made\" out of the main menu. Like Feedback, it should only be reachable from the About page and the footer at the bottom."
+      },
+      {
+        "label": "Fix",
+        "text": "Fix the About text, which still mentions the Europe topic that no longer exists."
       }
     ]
   },
