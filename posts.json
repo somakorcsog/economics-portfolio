@@ -2,7 +2,10 @@
   "site": {
     "title": "Economics with Soma Korcsog",
     "author": "Soma Korcsog",
-    "school": "",
+    "school": "Bergheidengasse 5–19",
+    "city": "Vienna",
+    "schoolYear": "2026/2027",
+    "subject": "Economics",
     "intro": "Assignments, interviews, podcasts and presentations from my Economics class. Markets, money, business cycles and what we learned outside the classroom."
   },
   "categories": [
@@ -15,12 +18,25 @@
     "International",
     "Excursions & Events"
   ],
+  "topicDescriptions": {
+    "Introduction": "What economics is about: scarcity, choices and how economists think.",
+    "Markets": "Supply and demand, prices and competition.",
+    "Money": "Banks, the ECB, inflation and financial markets.",
+    "Business Cycles": "Growth, recessions, unemployment and economic policy.",
+    "Sustainability": "Climate, resources and a greener economy.",
+    "Europe": "The EU, the euro and the single market.",
+    "International": "Trade, globalisation and exchange rates.",
+    "Excursions & Events": "Visits, talks and what we learned outside school."
+  },
   "posts": [
     {
       "id": "wu-vienna-fma-breakfast",
       "title": "Visit to WU Vienna: FMA Breakfast & Classmate Interview",
       "date": "2026-11",
-      "categories": ["Excursions & Events", "Money"],
+      "categories": [
+        "Excursions & Events",
+        "Money"
+      ],
       "featured": true,
       "excerpt": "Our class visited WU Vienna (Vienna University of Economics and Business) for the FMA Breakfast. Afterwards I interviewed a classmate about what we learned about Austria's Financial Market Authority.",
       "blocks": [

@@ -230,18 +230,6 @@
   }
 
   /* ---------- views ---------- */
-  var HERO_CHART =
-    '<svg class="hero-chart" viewBox="0 0 320 240" role="img" aria-label="Supply and demand diagram with equilibrium point">' +
-    '<line class="grid" x1="40" y1="60" x2="300" y2="60"/><line class="grid" x1="40" y1="110" x2="300" y2="110"/><line class="grid" x1="40" y1="160" x2="300" y2="160"/>' +
-    '<path class="axis" d="M40 16 V200 H304"/>' +
-    '<path class="d" d="M58 36 C 120 80, 200 150, 286 188"/>' +
-    '<path class="s" d="M58 186 C 130 150, 210 80, 286 34"/>' +
-    '<path class="guide" d="M40 110.5 H170.5 V200"/>' +
-    '<circle class="eq" cx="170.5" cy="110.5" r="5"/>' +
-    '<text x="28" y="22" text-anchor="end">P</text><text x="304" y="216" text-anchor="end">Q</text>' +
-    '<text x="34" y="114" text-anchor="end">P*</text><text x="170" y="216" text-anchor="middle">Q*</text>' +
-    '<text x="290" y="180" text-anchor="end">D</text><text x="290" y="48" text-anchor="end">S</text>' +
-    "</svg>";
 
   function renderHome() {
     var d = state.data, site = d.site || {};
@@ -253,18 +241,29 @@
     var title = site.title || "Economics Portfolio";
     var titleHtml = esc(title).replace(/^(Economics)/, "<em>$1</em>");
 
-    var html = '<section class="hero"><div class="flex flex-col gap-5">' +
-      '<span class="eyebrow">' + esc(site.school ? site.school + " · " : "") + "Economics · School Portfolio</span>" +
+    var schoolLine = site.school ? site.school + (site.city ? ", " + site.city : "") : "";
+    var html = '<section class="hero"><div class="hero-glow" aria-hidden="true"></div><div class="flex flex-col gap-5 relative">' +
+      '<span class="eyebrow">' + esc((site.subject || "Economics") + (site.schoolYear ? " · School year " + site.schoolYear : "")) + "</span>" +
       "<h1>" + titleHtml + "</h1><p>" + esc(site.intro || "") + "</p>" +
       '<div class="flex flex-wrap gap-3"><a class="btn" href="#posts">Browse assignments</a>' +
       (featured ? '<a class="btn secondary" href="#post-' + esc(featured.id) + '">Latest post</a>' : "") + "</div>" +
-      "</div>" + HERO_CHART + "</section>";
+      '</div><aside class="hero-card relative" aria-label="Portfolio details">' +
+      '<div class="flex items-center gap-4"><span class="monogram">' + esc((site.author || site.title || "E").split(/\s+/).map(function (w) { return w[0]; }).join("").slice(0, 2)) + "</span>" +
+      '<div class="min-w-0"><div class="eyebrow">Student portfolio</div><div class="display hero-card-name">' + esc(site.author || site.title) + "</div></div></div>" +
+      '<dl class="facts">' +
+      (schoolLine ? '<div class="wide"><dt>School</dt><dd>' + esc(schoolLine) + "</dd></div>" : "") +
+      (site.schoolYear ? '<div class="wide"><dt>School year</dt><dd>' + esc(site.schoolYear) + "</dd></div>" : "") +
+      '<div><dt>Assignments</dt><dd>' + posts.length + "</dd></div>" +
+      '<div><dt>Topics</dt><dd>' + (d.categories || []).length + "</dd></div></dl>" +
+      (featured ? '<a class="hero-latest" href="#post-' + esc(featured.id) + '"><span class="eyebrow">Latest</span><span class="hero-latest-title">' + esc(featured.title) + '</span><span aria-hidden="true">→</span></a>' : "") +
+      "</aside></section>";
 
     if (featured) {
       var hasVideo = postFormats(featured).indexOf("video") > -1;
       html += '<a class="featured" href="#post-' + esc(featured.id) + '">' +
         '<div class="featured-media">' + (featured.cover ? '<img src="' + esc(featured.cover) + '" alt="">' :
-          '<div class="frame-art"></div><div class="play-circle">' + (hasVideo ? ICONS.video.replace(/14/g, "26") : ICONS.text.replace(/14/g, "26")) + "</div>") + "</div>" +
+          '<div class="frame-art"></div><div class="featured-glow"></div><div class="play-circle">' + (hasVideo ? ICONS.video.replace(/14/g, "26") : ICONS.text.replace(/14/g, "26")) + "</div>" +
+          '<span class="media-label mono">' + (hasVideo ? "Video interview" : "Article") + "</span>") + "</div>" +
         '<div class="featured-body"><span class="badge-featured">Featured assignment</span>' +
         '<div class="flex flex-wrap gap-2">' + tags(featured.categories) + "</div>" +
         "<h2>" + esc(featured.title) + "</h2>" +
@@ -273,9 +272,17 @@
         "</div></a>";
     }
 
-    html += '<section id="posts" class="flex flex-col gap-5 pt-14" style="scroll-margin-top:90px">' +
+    var desc = d.topicDescriptions || {};
+    html += '<section class="pt-16 flex flex-col gap-5"><div><span class="eyebrow">Curriculum</span><h2 class="display section-title">Explore the topics</h2></div>' +
+      '<div class="topic-grid">' + (d.categories || []).map(function (c) {
+        return '<a class="topic-tile" style="--topic:' + topicVar(c) + '" href="#topic-' + slug(c) + '">' +
+          '<span class="topic-count mono">' + (counts[c] || 0) + (counts[c] === 1 ? " post" : " posts") + "</span>" +
+          "<h3>" + esc(c) + "</h3><p>" + esc(desc[c] || "") + "</p></a>";
+      }).join("") + "</div></section>";
+
+    html += '<section id="posts" class="flex flex-col gap-5 pt-16" style="scroll-margin-top:90px">' +
       '<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">' +
-      '<div><span class="eyebrow">Topics</span><h2 class="display" style="font-size:1.9rem;font-weight:800;line-height:1.1;margin-top:4px">All assignments</h2></div>' +
+      '<div><span class="eyebrow">Topics</span><h2 class="display section-title">All assignments</h2></div>' +
       '<label class="relative block w-full md:w-72"><span class="sr-only">Search posts</span>' +
       '<svg class="absolute left-3.5 top-1/2 -translate-y-1/2 muted" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +
       '<input id="search" class="search" type="search" placeholder="Search assignments" value="' + esc(state.query) + '"></label></div>' +
@@ -332,7 +339,7 @@
       '<div class="flex flex-wrap gap-2 mt-8">' + tags(post.categories, true) + "</div>" +
       "<h1>" + esc(post.title) + "</h1>" +
       (post.excerpt ? '<p class="article-lead">' + esc(post.excerpt) + "</p>" : "") +
-      '<div class="flex flex-wrap items-center gap-3 mt-5 muted"><span class="mono">' + formatDate(post.date) + '</span><span class="mono">·</span><span class="mono">' + readingTime(post) + " min read</span>" + formatIcons(post) + "</div>" +
+      '<div class="flex flex-wrap items-center gap-3 mt-5 muted"><span class="mono">' + formatDate(post.date) + '</span><span class="mono">·</span><span class="mono">' + readingTime(post) + " min read</span>" + (state.data.site.schoolYear ? '<span class="mono">·</span><span class="mono">School year ' + esc(state.data.site.schoolYear) + "</span>" : "") + formatIcons(post) + "</div>" +
       '<div class="article-body">' + (post.blocks || []).map(renderBlock).join("") + "</div></article>";
     wireVideos(app);
     window.scrollTo(0, 0);
@@ -393,8 +400,9 @@
     state.data = data;
     var t = (data.site && data.site.title) || "Economics Portfolio";
     document.getElementById("site-title").textContent = t;
-    document.getElementById("footer-title").textContent = t + (data.site && data.site.author ? " · " + data.site.author : "");
-    document.getElementById("year").textContent = new Date().getFullYear();
+    var site = data.site || {};
+    document.getElementById("footer-title").textContent = t;
+    document.getElementById("footer-meta").textContent = [site.school && (site.school + (site.city ? ", " + site.city : "")), site.schoolYear && "School year " + site.schoolYear].filter(Boolean).join(" · ") || "Economics class";
     buildMenus();
     route();
     window.addEventListener("hashchange", route);
