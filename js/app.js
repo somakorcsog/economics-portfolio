@@ -229,7 +229,7 @@
 
     h += '<section class="home-block container"><div class="duo">' +
       '<a class="promo" href="#glossary"><div class="eyebrow">Glossary</div><h3>' + (d.glossary || []).length + " key terms, explained in one sentence.</h3><span class=\"link\">Open the glossary</span></a>" +
-      (mo && mo.prompts ? '<a class="promo dark" href="#making-of"><div class="eyebrow">Making of</div><h3>Built with ' + mo.prompts.length + ' prompts, not code.</h3><span class="link">See the prompts</span></a>' : "") +
+      (mo && mo.prompts ? '<a class="promo dark" href="#making-of"><div class="eyebrow">How it was made</div><h3>Built with ' + mo.prompts.length + ' prompts, not code.</h3><span class="link">See the prompts</span></a>' : "") +
       "</div></section>";
     app.innerHTML = h;
     countUp();
@@ -440,9 +440,9 @@
 
   function renderMakingOf() {
     var m = state.data.makingOf || { prompts: [] };
-    document.title = "Making of · " + ((state.data.site || {}).title || "Economics");
+    document.title = "How it was made · " + ((state.data.site || {}).title || "Economics");
     app.innerHTML = '<header class="article-head container"><a class="back" href="#">Start page</a>' +
-      '<div class="tile-topics">Making of</div><h1>How this website was made.</h1>' +
+      '<div class="tile-topics">How it was made</div><h1>How this website was made.</h1>' +
       (m.intro ? '<p class="lead">' + esc(m.intro) + "</p>" : "") +
       '<div class="meta">' + m.prompts.length + " prompts · built with Claude</div></header>" +
       '<ol class="prompts container">' + m.prompts.map(function (pr, i) {

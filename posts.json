@@ -813,6 +813,10 @@
       {
         "label": "Features",
         "text": "Underline glossary terms inside the posts and show their explanation on hover. Add a nice link preview for when the site is shared on WhatsApp or Teams."
+      },
+      {
+        "label": "Naming",
+        "text": "Rename \"Making of\" to something clearer, so people know exactly what they are clicking on."
       }
     ]
   }
