@@ -274,7 +274,7 @@
     {
       "id": "wu-vienna-fma-breakfast",
       "title": "Visit to WU Vienna: FMA Breakfast & Classmate Interview",
-      "date": "2026-11",
+      "date": "2026-11-06",
       "categories": [
         "Excursions & Events",
         "Money"
@@ -285,7 +285,7 @@
         {
           "type": "text",
           "content": [
-            "In November 2026 our Economics class visited **WU Vienna** (Vienna University of Economics and Business) to attend the **FMA Breakfast**, an event hosted by the Austrian Financial Market Authority (FMA).",
+            "On **6 November 2026** our Economics class visited **WU Vienna** (Vienna University of Economics and Business) to attend the **FMA Breakfast**, an event hosted by the Austrian Financial Market Authority (FMA).",
             "",
             "After the event I filmed a short interview with a classmate about our impressions of the university and what we learned about how financial markets in Austria are supervised."
           ]
@@ -295,7 +295,7 @@
           "src": "media/wu-interview.mp4",
           "poster": "",
           "title": "Classmate interview: our day at WU Vienna",
-          "caption": "Filmed after the FMA Breakfast at WU Vienna, November 2026."
+          "caption": "Filmed after the FMA Breakfast at WU Vienna, 6 November 2026."
         },
         {
           "type": "heading",
@@ -318,6 +318,49 @@
             "",
             "### My reflection",
             "_What did I find most interesting, and why does financial market supervision matter for ordinary people?_"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "how-the-economy-works",
+      "title": "How Does the Economy Work?",
+      "date": "2026-10-10",
+      "categories": [
+        "Introduction",
+        "Markets",
+        "Business Cycles"
+      ],
+      "excerpt": "Our whiteboard explainer video: from wants and resources to the circular flow of income, supply and demand, GDP, the business cycle, and the role of jobs, banks, politics and trade.",
+      "cover": "media/how-the-economy-works.jpg",
+      "blocks": [
+        {
+          "type": "text",
+          "content": [
+            "For this team assignment we made a short video that explains **how the economy works**. We drew each idea step by step on the whiteboard."
+          ]
+        },
+        {
+          "type": "video",
+          "src": "media/how-the-economy-works.mp4",
+          "poster": "media/how-the-economy-works.jpg",
+          "title": "How does the economy work?",
+          "caption": "Whiteboard explainer video, 10 October 2026."
+        },
+        {
+          "type": "heading",
+          "text": "What the video covers"
+        },
+        {
+          "type": "notes",
+          "label": "Key points",
+          "content": [
+            "1. **Wants & resources:** people have unlimited wants, but resources are limited (scarcity).",
+            "2. **Circular flow of income:** households and firms exchange money, goods, services and work.",
+            "3. **Supply & demand:** price and quantity meet at the market equilibrium.",
+            "4. **Systems & GDP:** GDP = C + I + G + (X − M), with consumer spending, investment, government spending, exports and imports.",
+            "5. **Business cycle & inflation:** expansion, peak and recession, and how prices rise.",
+            "6. **Jobs, banks, politics & trade:** the actors that keep the economy running."
           ]
         }
       ]
