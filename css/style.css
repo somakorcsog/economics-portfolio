@@ -22,14 +22,14 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0b1324; --bg-alt: #0f1a30; --ink: #f4efe4; --muted: #a7afc2; --line: #23314d; --accent: #8fb4ff;
-    --band: #14213d; --band-ink: #f4efe4; --band-muted: #b7bfd3; --tile: #121d35; --bubble: #24427a; --nav-bg: rgba(11, 19, 36, 0.82);
+    --band: #14213d; --band-ink: #f4efe4; --band-muted: #b7bfd3; --tile: #121d35; --bubble: #24427a; --logo-k: #1f4b99; --nav-bg: rgba(11, 19, 36, 0.82);
     --good: #3fb950; --bad: #ff6b81; --shadow: 0 0 0 1px #23314d;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0b1324; --bg-alt: #0f1a30; --ink: #f4efe4; --muted: #a7afc2; --line: #23314d; --accent: #8fb4ff;
-  --band: #14213d; --band-ink: #f4efe4; --band-muted: #b7bfd3; --tile: #121d35; --bubble: #24427a; --nav-bg: rgba(11, 19, 36, 0.82);
+  --band: #14213d; --band-ink: #f4efe4; --band-muted: #b7bfd3; --tile: #121d35; --bubble: #24427a; --logo-k: #1f4b99; --nav-bg: rgba(11, 19, 36, 0.82);
   --good: #3fb950; --bad: #ff6b81; --shadow: 0 0 0 1px #23314d;
   color-scheme: dark;
 }
@@ -67,6 +67,12 @@ h1, h2, h3 { text-wrap: balance; }
   border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
 .nav-inner { max-width: 1080px; margin-inline: auto; height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
   padding-left: max(22px, env(safe-area-inset-left, 0px)); padding-right: max(22px, env(safe-area-inset-right, 0px)); }
+.brand { display: inline-flex; align-items: center; gap: 11px; min-width: 0; text-decoration: none; color: var(--ink); }
+.logo { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 10px; background: var(--ink); color: var(--bg);
+  font-weight: 800; font-size: 17px; letter-spacing: -0.06em; line-height: 1; transition: transform .35s cubic-bezier(.2,.8,.2,1), border-radius .35s; }
+.logo span { font-size: 12px; font-weight: 800; color: var(--logo-k, #e9c46a); letter-spacing: 0; transform: translateY(3px); }
+.brand:hover .logo { transform: rotate(-6deg) scale(1.06); border-radius: 12px; }
+.brand:active .logo { transform: scale(.94); }
 .nav-brand { font-weight: 600; font-size: 15px; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .nav-right { display: flex; align-items: center; gap: 6px; }
 .nav-links { display: none; gap: 26px; margin-right: 10px; }

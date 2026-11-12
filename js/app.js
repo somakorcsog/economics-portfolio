@@ -430,6 +430,9 @@
     var t = site.title || "Economics";
     document.getElementById("site-title").textContent = t;
     document.getElementById("footer-title").textContent = t;
+    document.querySelectorAll('a[href="#home"]').forEach(function (a) {
+      a.addEventListener("click", function () { var h = location.hash; if (!h || h === "#home") window.scrollTo({ top: 0, behavior: "smooth" }); });
+    });
     document.getElementById("footer-meta").textContent = [site.school && site.school + (site.city ? ", " + site.city : ""), site.schoolYear && "School year " + site.schoolYear].filter(Boolean).join(" · ");
     document.getElementById("footer-topics").innerHTML = topics().map(function (c) { return '<a href="#topic-' + slug(c) + '">' + esc(c) + "</a>"; }).join("");
 

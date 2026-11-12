@@ -801,6 +801,10 @@
       {
         "label": "Navigation",
         "text": "On the Assignments page, make \"All\" stand out so it is easy to get back to every assignment after choosing a topic."
+      },
+      {
+        "label": "Logo",
+        "text": "As a final task, make a logo for the website: an S, or an S with a K. Clicking it should always bring you back to the home page."
       }
     ]
   }
