@@ -368,7 +368,7 @@
       (site.schoolYear ? "<div><dt>School year</dt><dd>" + esc(site.schoolYear) + "</dd></div>" : "") +
       "<div><dt>Subject</dt><dd>" + esc(site.subject || "Economics") + "</dd></div>" +
       "<div><dt>Assignments</dt><dd>" + posts().length + "</dd></div>" +
-      '<div><dt>Built with</dt><dd><a class="link" href="#making-of">See the prompts</a></dd></div>' +
+      '<div><dt>How it was made</dt><dd><a class="link" href="#making-of">See all the prompts</a></dd></div>' +
       '<div><dt>Feedback</dt><dd><a class="link" href="#feedback">Report a bug or idea</a></dd></div></dl></div>';
   }
 
