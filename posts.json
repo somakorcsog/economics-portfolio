@@ -821,6 +821,10 @@
       {
         "label": "Update",
         "text": "Add a note to the website that new content comes out every week."
+      },
+      {
+        "label": "Structure",
+        "text": "Make the whole website clearer and better organised, and focus on the laptop view first."
       }
     ]
   }

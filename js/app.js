@@ -185,109 +185,105 @@
     });
   }
 
+  /* ---------- shared ---------- */
+  var SEARCH_ICON = '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+  var TONES = ["sky", "sand", "green", "red"];
+  function counts() {
+    var c = {};
+    posts().forEach(function (p) { (p.categories || []).forEach(function (x) { c[x] = (c[x] || 0) + 1; }); });
+    return c;
+  }
+  function schoolLine() { var s = state.data.site || {}; return s.school ? s.school + (s.city ? ", " + s.city : "") : ""; }
+  function pageHead(kicker, title, sub) {
+    return '<header class="page-head container"><div class="eyebrow">' + esc(kicker) + '</div><h1>' + esc(title) + "</h1>" + (sub ? "<p>" + esc(sub) + "</p>" : "") + "</header>";
+  }
+  function stat(n, label) { return '<div class="stat"><div class="num">' + n + '</div><div class="lbl">' + esc(label) + "</div></div>"; }
+
   /* ---------- home ---------- */
   function renderHome() {
-    var d = state.data, site = d.site || {}, all = posts();
-    var featured = all.filter(function (p) { return p.featured; })[0] || all[0];
-    var counts = {};
-    all.forEach(function (p) { (p.categories || []).forEach(function (c) { counts[c] = (counts[c] || 0) + 1; }); });
-    var schoolLine = site.school ? site.school + (site.city ? ", " + site.city : "") : "";
-
-    var h = "";
-    // Hero
-    h += '<section class="hero container"><div class="hero-kicker">' + esc(["School year " + (site.schoolYear || ""), schoolLine].filter(Boolean).join(" · ")) + "</div>" +
+    var d = state.data, site = d.site || {}, all = posts(), c = counts();
+    var latest = all.slice(0, 3);
+    var mo = d.makingOf;
+    var h = '<section class="home-hero container">' +
+      '<div class="home-hero-text"><div class="hero-kicker">' + esc("School year " + (site.schoolYear || "")) + "</div>" +
       "<h1>Economics.<span>" + esc(site.author ? "with " + site.author + "." : "") + "</span></h1>" +
       '<p class="hero-sub">Assignments, videos, interviews and excursions from my Economics class.</p>' +
       '<p class="hero-note"><span class="live-dot" aria-hidden="true"></span>New content every week</p>' +
-      '<div class="hero-actions"><a class="btn" href="#posts">View assignments</a>' +
-      (featured ? '<a class="link" href="#post-' + esc(featured.id) + '">Read the latest</a>' : "") + "</div>" +
-      '<div class="hero-stats">' + stat(all.length, "Assignments") + stat(counts["Excursions & Events"] || 0, "Excursions & events") + stat(all.filter(hasVideo).length, "Videos") + stat((d.glossary || []).length, "Key terms") + "</div>" +
-      "</section>";
-
-    // Featured band
-    if (featured) {
-      h += '<section class="section band" style="margin-top:72px"><div class="container featured reveal">' +
-        '<div><div class="eyebrow">Featured · ' + esc((featured.categories || []).join(", ")) + "</div><h2>" + esc(featured.title) + "</h2>" +
-        "<p>" + esc(featured.excerpt || "") + '</p><div class="meta">' + formatDate(featured.date) + " · " + formatLabel(featured) + "</div>" +
-        '<a class="link" href="#post-' + esc(featured.id) + '">Read the full post</a></div>' +
-        '<a href="#post-' + esc(featured.id) + '" aria-label="' + esc(featured.title) + '">' + cover(featured, { chip: formatDate(featured.date) }) + "</a></div></section>";
-    }
-
-    // Assignments
-    h += '<section class="section alt" id="posts" style="scroll-margin-top:48px"><div class="container">' +
-      '<div class="section-head"><div><h2 class="section-title">All assignments.</h2><p class="section-sub">Newest first. Filter by topic or search.</p></div></div>' +
-      '<div class="toolbar"><div class="filters" role="group" aria-label="Filter by topic">' +
-      '<button type="button" class="chip-btn" data-filter="all" aria-pressed="' + (state.filter === "all") + '">All</button>' +
-      (d.categories || []).map(function (c) {
-        return '<button type="button" class="chip-btn" data-filter="' + slug(c) + '" aria-pressed="' + (state.filter === slug(c)) + '">' + esc(c) + "</button>";
-      }).join("") + "</div>" +
-      '<label class="search-wrap"><span class="sr-only">Search assignments</span><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +
-      '<input id="search" class="search" type="search" placeholder="Search" value="' + esc(state.query) + '"></label></div>' +
-      '<div id="post-list"></div></div></section>';
-
-    // Topics
-    var desc = d.topicDescriptions || {}, imgs = d.topicImages || {};
-    h += '<section class="section" id="topics" style="scroll-margin-top:48px"><div class="container">' +
-      '<div class="section-head"><div><h2 class="section-title">Topics.</h2><p class="section-sub">The eight areas of our Economics curriculum.</p></div></div>' +
-      '<div class="topic-rail">' + (d.categories || []).map(function (c) {
-        var img = null;
-        return '<a class="topic-card tone-' + ["sky", "sand", "green", "red", "sky", "sand", "green", "red"][(d.categories || []).indexOf(c) % 8] + '" href="#topic-' + slug(c) + '">' + (img ? '<img src="' + esc(img) + '" alt="" loading="lazy">' : "") +
-          '<span class="count">' + (counts[c] || 0) + (counts[c] === 1 ? " post" : " posts") + "</span><h3>" + esc(c) + "</h3><p>" + esc(desc[c] || "") + "</p></a>";
-      }).join("") + "</div></div></section>";
-
-    // Glossary
-    h += '<section class="section alt" id="glossary" style="scroll-margin-top:48px"><div class="container">' +
-      '<div class="section-head"><div><h2 class="section-title">Glossary.</h2><p class="section-sub">Every key term from my assignments, explained in one sentence.</p></div></div>' +
-      '<div class="glossary-tools"><label class="search-wrap"><span class="sr-only">Search the glossary</span><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +
-      '<input id="glossary-search" class="search" type="search" placeholder="Search terms, e.g. GDP" value="' + esc(state.glossaryQuery) + '"></label><span class="glossary-count" id="glossary-count"></span></div>' +
-      '<dl class="glossary" id="glossary-list"></dl></div></section>';
-
-    // Making of teaser
-    var mo = d.makingOf;
-    if (mo && mo.prompts && mo.prompts.length) {
-      h += '<section class="section band"><div class="container teaser"><div><div class="eyebrow">Making of</div><h2 class="section-title">Built with prompts, not code.</h2>' +
-        '<p class="section-sub teaser-sub">I never touched HTML or CSS. Read all ' + mo.prompts.length + ' prompts that created this website.</p></div>' +
-        '<a class="btn btn-light" href="#making-of">See the prompts</a></div></section>';
-    }
-
-    // About
-    h += '<section class="section alt" id="about" style="scroll-margin-top:48px"><div class="container about">' +
-      '<div><h2 class="section-title">About.</h2><div class="prose" style="margin-top:24px">' + markdown(site.about || "") + "</div></div>" +
-      '<dl class="facts">' +
-      (site.author ? "<div><dt>Student</dt><dd>" + esc(site.author) + "</dd></div>" : "") +
-      (schoolLine ? "<div><dt>School</dt><dd>" + esc(schoolLine) + "</dd></div>" : "") +
+      '<div class="hero-actions"><a class="btn" href="#posts">View all assignments</a>' +
+      (all[0] ? '<a class="link" href="#post-' + esc(all[0].id) + '">Read the latest</a>' : "") + "</div></div>" +
+      '<aside class="glance" aria-label="At a glance"><div class="glance-title">At a glance</div>' +
+      '<div class="glance-stats">' + stat(all.length, "Assignments") + stat(c["Excursions & Events"] || 0, "Excursions") + stat(all.filter(hasVideo).length, "Videos") + stat((d.glossary || []).length, "Key terms") + "</div>" +
+      '<dl class="facts">' + (schoolLine() ? "<div><dt>School</dt><dd>" + esc(schoolLine()) + "</dd></div>" : "") +
       (site.schoolYear ? "<div><dt>School year</dt><dd>" + esc(site.schoolYear) + "</dd></div>" : "") +
-      "<div><dt>Subject</dt><dd>" + esc(site.subject || "Economics") + "</dd></div>" +
-      "<div><dt>Assignments</dt><dd>" + all.length + "</dd></div>" +
-      '<div><dt>Built with</dt><dd><a class="link" href="#making-of">See the prompts</a></dd></div></dl></div></section>';
+      "<div><dt>Subject</dt><dd>" + esc(site.subject || "Economics") + "</dd></div></dl></aside></section>";
 
+    h += '<section class="home-block container"><div class="block-head"><h2>Latest assignments</h2><a class="link" href="#posts">See all ' + all.length + "</a></div>" +
+      '<div class="tiles three">' + latest.map(tile).join("") + "</div></section>";
+
+    h += '<section class="home-block container"><div class="block-head"><h2>Browse by topic</h2><a class="link" href="#posts">All topics</a></div>' +
+      '<div class="topic-grid">' + (d.categories || []).map(function (cat, i) {
+        return '<a class="topic-mini tone-' + TONES[i % 4] + '" href="#topic-' + slug(cat) + '"><span class="count">' + (c[cat] || 0) + (c[cat] === 1 ? " post" : " posts") + "</span><h3>" + esc(cat) + "</h3><p>" + esc((d.topicDescriptions || {})[cat] || "") + "</p></a>";
+      }).join("") + "</div></section>";
+
+    h += '<section class="home-block container"><div class="duo">' +
+      '<a class="promo" href="#glossary"><div class="eyebrow">Glossary</div><h3>' + (d.glossary || []).length + " key terms, explained in one sentence.</h3><span class=\"link\">Open the glossary</span></a>" +
+      (mo && mo.prompts ? '<a class="promo dark" href="#making-of"><div class="eyebrow">Making of</div><h3>Built with ' + mo.prompts.length + ' prompts, not code.</h3><span class="link">See the prompts</span></a>' : "") +
+      "</div></section>";
     app.innerHTML = h;
-    renderList();
-    renderGlossary();
+    countUp();
+  }
 
+  function countUp() {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    app.querySelectorAll(".glance .num").forEach(function (el) {
+      var target = parseInt(el.textContent, 10), t0 = performance.now();
+      if (!target) return;
+      (function step(now) {
+        var k = Math.min(1, (now - t0) / 1100);
+        el.textContent = Math.round(target * (1 - Math.pow(1 - k, 3)));
+        if (k < 1) requestAnimationFrame(step);
+      })(t0);
+    });
+  }
+
+  /* ---------- assignments ---------- */
+  function renderAssignments() {
+    var d = state.data, c = counts(), all = posts();
+    document.title = "Assignments · " + (d.site.title || "Economics");
+    app.innerHTML = pageHead("School year " + (d.site.schoolYear || ""), "Assignments", "Every assignment of the school year, newest first.") +
+      '<div class="layout container"><aside class="sidebar">' +
+      '<label class="search-wrap"><span class="sr-only">Search assignments</span>' + SEARCH_ICON + '<input id="search" class="search" type="search" placeholder="Search assignments" value="' + esc(state.query) + '"></label>' +
+      '<div class="side-label">Topics</div><nav class="side-nav" aria-label="Filter by topic">' +
+      '<button type="button" data-filter="all" aria-pressed="' + (state.filter === "all") + '"><span>All posts</span><span class="n">' + all.length + "</span></button>" +
+      (d.categories || []).map(function (cat) {
+        return '<button type="button" data-filter="' + slug(cat) + '" aria-pressed="' + (state.filter === slug(cat)) + '"><span>' + esc(cat) + '</span><span class="n">' + (c[cat] || 0) + "</span></button>";
+      }).join("") + "</nav></aside>" +
+      '<div class="main-col"><div class="result-line" id="result-line"></div><div id="post-list"></div></div></div>';
+    renderList();
     app.querySelectorAll("[data-filter]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         state.filter = btn.getAttribute("data-filter");
+        try { history.replaceState(null, "", state.filter === "all" ? "#posts" : "#topic-" + state.filter); } catch (e) {}
         app.querySelectorAll("[data-filter]").forEach(function (b) { b.setAttribute("aria-pressed", String(b === btn)); });
         renderList();
       });
     });
     document.getElementById("search").addEventListener("input", function (e) { state.query = e.target.value; renderList(); });
-    document.getElementById("glossary-search").addEventListener("input", function (e) { state.glossaryQuery = e.target.value; renderGlossary(); });
-    setupReveal();
   }
-
-  function stat(n, label) { return '<div class="stat"><div class="num" data-count="' + n + '">' + n + '</div><div class="lbl">' + esc(label) + "</div></div>"; }
 
   function renderList() {
     var list = document.getElementById("post-list");
     if (!list) return;
     var q = state.query.trim().toLowerCase();
+    var cats = state.data.categories || [];
     var res = posts().filter(function (p) {
       var inCat = state.filter === "all" || (p.categories || []).some(function (c) { return slug(c) === state.filter; });
       var hay = (p.title + " " + (p.excerpt || "") + " " + (p.categories || []).join(" ")).toLowerCase();
       return inCat && (!q || hay.indexOf(q) > -1);
     });
+    var catName = state.filter === "all" ? "All topics" : (cats.filter(function (c) { return slug(c) === state.filter; })[0] || "");
+    var rl = document.getElementById("result-line");
+    if (rl) rl.textContent = catName + " · " + res.length + (res.length === 1 ? " assignment" : " assignments") + (q ? " matching “" + state.query + "”" : "");
     if (!res.length) {
       list.innerHTML = '<div class="empty"><strong>No assignments here yet</strong>' + (q ? "Nothing matches “" + esc(state.query) + "”." : "Posts for this topic will appear here.") + "</div>";
       return;
@@ -299,7 +295,7 @@
       seen[key].posts.push(p);
     });
     list.innerHTML = groups.map(function (g) {
-      return '<div><div class="month-label">' + formatDate(g.key) + "<span>" + g.posts.length + (g.posts.length === 1 ? " post" : " posts") + "</span></div>" +
+      return '<div class="month"><div class="month-label">' + formatDate(g.key) + "<span>" + g.posts.length + (g.posts.length === 1 ? " post" : " posts") + "</span></div>" +
         '<div class="tiles">' + g.posts.map(tile).join("") + "</div></div>";
     }).join("");
   }
@@ -310,18 +306,58 @@
       '<div class="tile-meta"><span>' + formatDate(p.date) + "</span><span>" + formatLabel(p) + "</span></div></div></a>";
   }
 
+  /* ---------- glossary ---------- */
+  function renderGlossaryPage() {
+    var d = state.data;
+    document.title = "Glossary · " + (d.site.title || "Economics");
+    var letters = {};
+    (d.glossary || []).forEach(function (t) { letters[t.term.charAt(0).toUpperCase()] = 1; });
+    app.innerHTML = pageHead("Glossary", "Key terms", "Every key term from my assignments, explained in one sentence.") +
+      '<div class="container"><div class="glossary-tools"><label class="search-wrap"><span class="sr-only">Search the glossary</span>' + SEARCH_ICON +
+      '<input id="glossary-search" class="search" type="search" placeholder="Search terms, e.g. GDP" value="' + esc(state.glossaryQuery) + '"></label>' +
+      '<div class="az">' + "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(function (l) {
+        return letters[l] ? '<button type="button" data-letter="' + l + '">' + l + "</button>" : '<span>' + l + "</span>";
+      }).join("") + '</div><span class="glossary-count" id="glossary-count"></span></div>' +
+      '<dl class="glossary" id="glossary-list"></dl></div>';
+    renderGlossary();
+    document.getElementById("glossary-search").addEventListener("input", function (e) { state.glossaryQuery = e.target.value; renderGlossary(); });
+    app.querySelectorAll("[data-letter]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        state.glossaryQuery = ""; document.getElementById("glossary-search").value = ""; renderGlossary();
+        var el = document.getElementById("term-" + b.getAttribute("data-letter"));
+        if (el) el.scrollIntoView({ block: "center" });
+      });
+    });
+  }
+
   function renderGlossary() {
     var el = document.getElementById("glossary-list");
     if (!el) return;
-    var q = state.glossaryQuery.trim().toLowerCase();
+    var q = state.glossaryQuery.trim().toLowerCase(), firstSeen = {};
     var terms = (state.data.glossary || []).slice().sort(function (a, b) { return a.term.localeCompare(b.term); }).filter(function (t) {
       return !q || (t.term + " " + t.definition).toLowerCase().indexOf(q) > -1;
     });
     document.getElementById("glossary-count").textContent = terms.length + (terms.length === 1 ? " term" : " terms");
     el.innerHTML = terms.length ? terms.map(function (t) {
-      var p = t.post && postById(t.post);
-      return '<div class="term"><dt>' + esc(t.term) + "</dt><dd>" + esc(t.definition) + "</dd>" + (p ? '<a href="#post-' + esc(p.id) + '">From: ' + esc(p.title) + "</a>" : "") + "</div>";
+      var p = t.post && postById(t.post), L = t.term.charAt(0).toUpperCase(), idAttr = "";
+      if (!firstSeen[L]) { firstSeen[L] = 1; idAttr = ' id="term-' + L + '"'; }
+      return '<div class="term"' + idAttr + "><dt>" + esc(t.term) + "</dt><dd>" + esc(t.definition) + "</dd>" + (p ? '<a href="#post-' + esc(p.id) + '">From: ' + esc(p.title) + "</a>" : "") + "</div>";
     }).join("") : '<div class="term" style="grid-column:1/-1"><dt>No matching term</dt><dd>Try another word.</dd></div>';
+  }
+
+  /* ---------- about ---------- */
+  function renderAbout() {
+    var d = state.data, site = d.site || {};
+    document.title = "About · " + (site.title || "Economics");
+    app.innerHTML = pageHead("About", "About this portfolio", "") +
+      '<div class="container about"><div class="prose">' + markdown(site.about || "") + "</div>" +
+      '<dl class="facts">' +
+      (site.author ? "<div><dt>Student</dt><dd>" + esc(site.author) + "</dd></div>" : "") +
+      (schoolLine() ? "<div><dt>School</dt><dd>" + esc(schoolLine()) + "</dd></div>" : "") +
+      (site.schoolYear ? "<div><dt>School year</dt><dd>" + esc(site.schoolYear) + "</dd></div>" : "") +
+      "<div><dt>Subject</dt><dd>" + esc(site.subject || "Economics") + "</dd></div>" +
+      "<div><dt>Assignments</dt><dd>" + posts().length + "</dd></div>" +
+      '<div><dt>Built with</dt><dd><a class="link" href="#making-of">See the prompts</a></dd></div></dl></div>';
   }
 
   /* ---------- post ---------- */
@@ -360,7 +396,7 @@
   }
 
   /* ---------- interactions ---------- */
-  function setupReveal() {
+  function setupReveal_unused() {
     if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     var vh = window.innerHeight;
 
@@ -411,22 +447,23 @@
     }, { passive: true });
   }
 
-  var SECTIONS = ["posts", "topics", "glossary", "about"];
   function route() {
     var h = decodeURIComponent(location.hash.replace(/^#/, ""));
+    var page = "home";
     document.title = (state.data.site && state.data.site.title) || "Economics";
-    if (h.indexOf("post-") === 0) { renderPost(h.slice(5)); return; }
-    if (h === "making-of") { renderMakingOf(); return; }
-    var target = null;
-    if (h.indexOf("topic-") === 0) { state.filter = h.slice(6) || "all"; if (state.filter === "all") state.filter = "all"; target = "posts"; }
-    else if (SECTIONS.indexOf(h) > -1) target = h;
-    if (!document.getElementById("posts")) renderHome();
-    else {
-      app.querySelectorAll("[data-filter]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-filter") === state.filter)); });
-      renderList();
-    }
-    if (target) { var el = document.getElementById(target); if (el) el.scrollIntoView(); }
-    else window.scrollTo(0, 0);
+    if (h.indexOf("post-") === 0) { page = "posts"; renderPost(h.slice(5)); }
+    else if (h === "making-of") { page = "making-of"; renderMakingOf(); }
+    else if (h === "glossary") { page = "glossary"; renderGlossaryPage(); }
+    else if (h === "about") { page = "about"; renderAbout(); }
+    else if (h === "posts" || h === "topics" || h.indexOf("topic-") === 0) {
+      page = "posts";
+      if (h.indexOf("topic-") === 0) state.filter = h.slice(6) || "all"; else if (h === "posts") state.filter = state.filter || "all";
+      renderAssignments();
+    } else renderHome();
+    document.querySelectorAll(".nav-links a, .mobile-menu a").forEach(function (a) {
+      if (a.getAttribute("href") === "#" + page) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
+    if (h.indexOf("post-") !== 0) window.scrollTo(0, 0);
     document.getElementById("progress").style.transform = "scaleX(0)";
   }
 
@@ -434,10 +471,7 @@
     state.data = data;
     setupChrome();
     route();
-    window.addEventListener("hashchange", function () {
-      if (/^#(post-|making-of)/.test(location.hash) || !document.getElementById("posts")) app.innerHTML = "";
-      route();
-    });
+    window.addEventListener("hashchange", route);
   }
 
   fetch("posts.json", { cache: "no-store" })
