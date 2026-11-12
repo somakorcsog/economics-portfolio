@@ -762,5 +762,62 @@
       "definition": "An employee who reports wrongdoing inside their own organisation.",
       "post": "money-laundering-danske-bank"
     }
-  ]
+  ],
+  "makingOf": {
+    "intro": "This website was built with Claude, an AI assistant by Anthropic. I never edited HTML or CSS myself. I wrote prompts, sent my texts, videos and notes, and Claude built and updated the site. All posts live in one simple data file, posts.json, and every change goes online through GitHub Pages.",
+    "prompts": [
+      {
+        "label": "The first prompt",
+        "text": "Create a modern, clean, and responsive Economics blog and portfolio website in English for my school assignments (similar in structure to modern Wix economics blogs, but with a much cleaner, faster, and more contemporary design).\n\n1. Structure & Navigation:\n- Header: Website title 'Economics Portfolio' (or 'Economics with [MY FIRST NAME]') and a clean navigation bar.\n- Categories / Topics: Include a filterable overview and menu structure for core economics topics: All Posts, Introduction, Markets, Money, Business Cycles, Sustainability, Europe, International, and Excursions & Events.\n- Media Support: The blog must easily support multiple assignment formats: text articles, embedded videos (MP4 files or YouTube links), audio/podcasts (MP3 players), and embedded presentations (PDFs or slides).\n\n2. First Assignment (Ready to go):\nCreate the very first blog post as a featured article right at the top of the page:\n- Title: 'Visit to WU Vienna: FMA Breakfast & Classmate Interview'\n- Category: Excursions & Events (and Money)\n- Date: November 2026\n- Content: Include a clean placeholder section for our filmed video interview with a classmate about our visit to the WU (Vienna University of Economics and Business) and the FMA (Financial Market Authority) Breakfast, plus a structured text section below the video titled 'FMA Focus Area' where I can easily paste my notes from the class handout.\n\n3. Super Easy Workflow for Future Assignments:\nI do not want to edit HTML or CSS myself. Store all posts in a single, super simple data file (like posts.json or separate Markdown files in a posts/ folder). When I give you new texts, videos, podcasts, or presentations in the future and say 'Add this as a new assignment', you will update the site automatically.\n\n4. Setup:\nBuild the site using simple, reliable web technologies (HTML, Tailwind CSS, vanilla JavaScript) so it can be hosted for free anywhere (like GitHub Pages or Netlify). Start a local preview server so I can view it right away, and briefly explain how I can drop in my interview video file.\n\n5. If you have any questions, please ask before you start."
+      },
+      {
+        "label": "Setup",
+        "text": "Use the title 'Economics with Soma Korcsog'. Host the site on GitHub Pages in a new repository, and keep all files locally on my computer so we can sync them with GitHub."
+      },
+      {
+        "label": "Design",
+        "text": "Make the website a bit more appealing. Add my school (Bergheidengasse 5–19) and show the school year 2026/2027 instead of just 2026. Remove the coordinate system, it doesn't fit."
+      },
+      {
+        "label": "New assignments",
+        "text": "Add these assignments as new posts: 'Money Laundering: explain one method' (6 Nov 2026), 'FMA: explain one term in one minute: Memecoins' (6 Nov 2026), and my notes from the GEWINN fair (23 Oct 2026). The fair notes were written word for word, so clean them up."
+      },
+      {
+        "label": "Correction",
+        "text": "The FMA breakfast was on 6 November 2026."
+      },
+      {
+        "label": "Sorting",
+        "text": "Sort the posts by date so that the newest posts appear first."
+      },
+      {
+        "label": "New assignment",
+        "text": "Add our video 'How does the economy work?' from 10 October 2026 and write a few keywords about what it covers."
+      },
+      {
+        "label": "New assignment",
+        "text": "Add a post about the debate at the OeNB on 22 October 2026: China, the digital euro, hidden champions and the crisis in France. Also add the official programme of the 3rd Financial Education Breakfast to the WU post."
+      },
+      {
+        "label": "Detail",
+        "text": "Add my four questions to the OeNB post and highlight that I got to ask the question about the digital euro."
+      },
+      {
+        "label": "Redesign",
+        "text": "The website feels short and looks too AI-generated. Make it longer, add images and give it a modern design like Apple's website. Add one or two special features so it's the best in class. As a final step, look for bugs and fix them."
+      },
+      {
+        "label": "Colours",
+        "text": "Use light cream colours instead of pure white, with some navy blue, in both light and dark mode."
+      },
+      {
+        "label": "Making of",
+        "text": "Add my prompts to the website so people can see how it was created."
+      },
+      {
+        "label": "Structure",
+        "text": "If you can't add other photos, remove the five images people see right when the website loads, because they don't look good. And give the website a better structure overall."
+      }
+    ]
+  }
 }

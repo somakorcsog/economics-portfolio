@@ -192,8 +192,6 @@
     var counts = {};
     all.forEach(function (p) { (p.categories || []).forEach(function (c) { counts[c] = (counts[c] || 0) + 1; }); });
     var schoolLine = site.school ? site.school + (site.city ? ", " + site.city : "") : "";
-    var reelImgs = [];
-    all.forEach(function (p) { (p.blocks || []).forEach(function (b) { if (b.type === "gallery") (b.images || []).forEach(function (im) { reelImgs.push({ src: im.src, caption: im.caption, id: p.id }); }); }); });
 
     var h = "";
     // Hero
@@ -202,9 +200,8 @@
       '<p class="hero-sub">Assignments, videos, interviews and excursions from my Economics class.</p>' +
       '<div class="hero-actions"><a class="btn" href="#posts">View assignments</a>' +
       (featured ? '<a class="link" href="#post-' + esc(featured.id) + '">Read the latest</a>' : "") + "</div>" +
-      (reelImgs.length ? '<div class="reel" aria-label="Stills from our explainer video">' + reelImgs.map(function (im) {
-        return '<figure><a href="#post-' + esc(im.id) + '"><img src="' + esc(im.src) + '" alt="' + esc(im.caption || "") + '"></a>' + (im.caption ? "<figcaption>" + esc(im.caption) + "</figcaption>" : "") + "</figure>";
-      }).join("") + "</div>" : "") + "</section>";
+      '<div class="hero-stats">' + stat(all.length, "Assignments") + stat(counts["Excursions & Events"] || 0, "Excursions & events") + stat(all.filter(hasVideo).length, "Videos") + stat((d.glossary || []).length, "Key terms") + "</div>" +
+      "</section>";
 
     // Featured band
     if (featured) {
@@ -214,13 +211,6 @@
         '<a class="link" href="#post-' + esc(featured.id) + '">Read the full post</a></div>' +
         '<a href="#post-' + esc(featured.id) + '" aria-label="' + esc(featured.title) + '">' + cover(featured, { chip: formatDate(featured.date) }) + "</a></div></section>";
     }
-
-    // Stats
-    var videos = all.filter(hasVideo).length;
-    var events = counts["Excursions & Events"] || 0;
-    h += '<section class="section"><div class="container"><div class="stats reveal">' +
-      stat(all.length, "Assignments") + stat(events, "Excursions & events") + stat(videos, "Videos") + stat((d.glossary || []).length, "Key terms") +
-      "</div></div></section>";
 
     // Assignments
     h += '<section class="section alt" id="posts" style="scroll-margin-top:48px"><div class="container">' +
@@ -239,8 +229,8 @@
     h += '<section class="section" id="topics" style="scroll-margin-top:48px"><div class="container">' +
       '<div class="section-head"><div><h2 class="section-title">Topics.</h2><p class="section-sub">The eight areas of our Economics curriculum.</p></div></div>' +
       '<div class="topic-rail">' + (d.categories || []).map(function (c) {
-        var img = imgs[c];
-        return '<a class="topic-card' + (img ? " has-img" : "") + '" href="#topic-' + slug(c) + '">' + (img ? '<img src="' + esc(img) + '" alt="" loading="lazy">' : "") +
+        var img = null;
+        return '<a class="topic-card tone-' + ["sky", "sand", "green", "red", "sky", "sand", "green", "red"][(d.categories || []).indexOf(c) % 8] + '" href="#topic-' + slug(c) + '">' + (img ? '<img src="' + esc(img) + '" alt="" loading="lazy">' : "") +
           '<span class="count">' + (counts[c] || 0) + (counts[c] === 1 ? " post" : " posts") + "</span><h3>" + esc(c) + "</h3><p>" + esc(desc[c] || "") + "</p></a>";
       }).join("") + "</div></div></section>";
 
@@ -251,15 +241,13 @@
       '<input id="glossary-search" class="search" type="search" placeholder="Search terms, e.g. GDP" value="' + esc(state.glossaryQuery) + '"></label><span class="glossary-count" id="glossary-count"></span></div>' +
       '<dl class="glossary" id="glossary-list"></dl></div></section>';
 
-    // Timeline
-    var tl = all.slice();
-    h += '<section class="section" id="timeline" style="scroll-margin-top:48px"><div class="container">' +
-      '<div class="section-head" style="justify-content:center;text-align:center"><div><h2 class="section-title">The school year so far.</h2><p class="section-sub" style="margin-inline:auto">' + esc("School year " + (site.schoolYear || "")) + "</p></div></div>" +
-      '<div class="timeline">' + tl.map(function (p) {
-        var parts = String(p.date).split("-"), day = parseInt(parts[2], 10), mon = MONTHS[parseInt(parts[1], 10) - 1] || "";
-        return '<a class="tl-item" href="#post-' + esc(p.id) + '"><div class="tl-date"><b>' + (day || "") + "</b>" + mon.slice(0, 3) + " " + parts[0] + "</div>" +
-          "<div><h3>" + esc(p.title) + "</h3><p>" + esc((p.categories || []).join(" · ")) + " · " + formatLabel(p) + "</p></div></a>";
-      }).join("") + "</div></div></section>";
+    // Making of teaser
+    var mo = d.makingOf;
+    if (mo && mo.prompts && mo.prompts.length) {
+      h += '<section class="section band"><div class="container teaser"><div><div class="eyebrow">Making of</div><h2 class="section-title">Built with prompts, not code.</h2>' +
+        '<p class="section-sub teaser-sub">I never touched HTML or CSS. Read all ' + mo.prompts.length + ' prompts that created this website.</p></div>' +
+        '<a class="btn btn-light" href="#making-of">See the prompts</a></div></section>';
+    }
 
     // About
     h += '<section class="section alt" id="about" style="scroll-margin-top:48px"><div class="container about">' +
@@ -269,7 +257,8 @@
       (schoolLine ? "<div><dt>School</dt><dd>" + esc(schoolLine) + "</dd></div>" : "") +
       (site.schoolYear ? "<div><dt>School year</dt><dd>" + esc(site.schoolYear) + "</dd></div>" : "") +
       "<div><dt>Subject</dt><dd>" + esc(site.subject || "Economics") + "</dd></div>" +
-      "<div><dt>Assignments</dt><dd>" + all.length + "</dd></div></dl></div></section>";
+      "<div><dt>Assignments</dt><dd>" + all.length + "</dd></div>" +
+      '<div><dt>Built with</dt><dd><a class="link" href="#making-of">See the prompts</a></dd></div></dl></div></section>';
 
     app.innerHTML = h;
     renderList();
@@ -355,6 +344,20 @@
     window.scrollTo(0, 0);
   }
 
+  function renderMakingOf() {
+    var m = state.data.makingOf || { prompts: [] };
+    document.title = "Making of · " + ((state.data.site || {}).title || "Economics");
+    app.innerHTML = '<header class="article-head container"><a class="back" href="#">Start page</a>' +
+      '<div class="tile-topics">Making of</div><h1>How this website was made.</h1>' +
+      (m.intro ? '<p class="lead">' + esc(m.intro) + "</p>" : "") +
+      '<div class="meta">' + m.prompts.length + " prompts · built with Claude</div></header>" +
+      '<ol class="prompts container">' + m.prompts.map(function (pr, i) {
+        return '<li class="prompt' + (i === 0 ? " first" : "") + '"><div class="prompt-meta"><span class="prompt-num">' + (i + 1) + "</span>" + esc(pr.label || "Prompt") + "</div>" +
+          '<div class="prompt-bubble">' + esc(pr.text) + "</div></li>";
+      }).join("") + "</ol>";
+    window.scrollTo(0, 0);
+  }
+
   /* ---------- interactions ---------- */
   function setupReveal() {
     if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -407,11 +410,12 @@
     }, { passive: true });
   }
 
-  var SECTIONS = ["posts", "topics", "glossary", "timeline", "about"];
+  var SECTIONS = ["posts", "topics", "glossary", "about"];
   function route() {
     var h = decodeURIComponent(location.hash.replace(/^#/, ""));
     document.title = (state.data.site && state.data.site.title) || "Economics";
     if (h.indexOf("post-") === 0) { renderPost(h.slice(5)); return; }
+    if (h === "making-of") { renderMakingOf(); return; }
     var target = null;
     if (h.indexOf("topic-") === 0) { state.filter = h.slice(6) || "all"; if (state.filter === "all") state.filter = "all"; target = "posts"; }
     else if (SECTIONS.indexOf(h) > -1) target = h;
@@ -430,7 +434,7 @@
     setupChrome();
     route();
     window.addEventListener("hashchange", function () {
-      if (/^#post-/.test(location.hash) || !document.getElementById("posts")) app.innerHTML = "";
+      if (/^#(post-|making-of)/.test(location.hash) || !document.getElementById("posts")) app.innerHTML = "";
       route();
     });
   }
