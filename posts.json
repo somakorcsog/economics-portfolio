@@ -805,6 +805,10 @@
       {
         "label": "Logo",
         "text": "As a final task, make a logo for the website: an S, or an S with a K. Clicking it should always bring you back to the home page."
+      },
+      {
+        "label": "Animations",
+        "text": "Discuss which animations make the most sense without overdoing it. Then add a subtle scroll reveal and check whether the existing animations can be improved."
       }
     ]
   }
