@@ -842,6 +842,10 @@
       {
         "label": "Fix",
         "text": "Fix the About text, which still mentions the Europe topic that no longer exists."
+      },
+      {
+        "label": "Check-up",
+        "text": "Do a check-up of the whole website yourself and tell me what to improve and which bugs you find. Then fix them: search the full post text, always show all assignments from the menu, stop sideways scrolling on phones, and handle old topic links."
       }
     ]
   },

@@ -281,6 +281,19 @@
     document.getElementById("search").addEventListener("input", function (e) { state.query = e.target.value; renderList(); });
   }
 
+  /* Full-text search: title, summary, topics and everything written in the post */
+  function searchText(p) {
+    if (p._hay) return p._hay;
+    var parts = [p.title, p.excerpt, (p.categories || []).join(" "), p.coverArt ? p.coverArt.big + " " + p.coverArt.small : ""];
+    (p.blocks || []).forEach(function (b) {
+      parts.push(b.text, b.title, b.label, b.caption, b.author, toText(b.content));
+      (b.questions || []).forEach(function (q) { parts.push(q.q, (q.options || []).join(" "), q.explain); });
+      (b.images || []).forEach(function (im) { parts.push(im.caption); });
+    });
+    p._hay = parts.filter(Boolean).join(" ").replace(/[*_>#`]/g, " ").replace(/\s+/g, " ").toLowerCase();
+    return p._hay;
+  }
+
   function renderList() {
     var list = document.getElementById("post-list");
     if (!list) return;
@@ -288,7 +301,7 @@
     var cats = state.data.categories || [];
     var res = posts().filter(function (p) {
       var inCat = state.filter === "all" || (p.categories || []).some(function (c) { return slug(c) === state.filter; });
-      var hay = (p.title + " " + (p.excerpt || "") + " " + (p.categories || []).join(" ")).toLowerCase();
+      var hay = searchText(p);
       return inCat && (!q || hay.indexOf(q) > -1);
     });
     var catName = state.filter === "all" ? "All topics" : (cats.filter(function (c) { return slug(c) === state.filter; })[0] || "");
@@ -687,7 +700,12 @@
     else if (h === "feedback") { page = "feedback"; renderFeedback(); }
     else if (h === "posts" || h === "topics" || h.indexOf("topic-") === 0) {
       page = "posts";
-      if (h.indexOf("topic-") === 0) state.filter = h.slice(6) || "all"; else if (h === "posts") state.filter = state.filter || "all";
+      if (h.indexOf("topic-") === 0) {
+        var want = h.slice(6);
+        var known = topics().some(function (c) { return slug(c) === want; });
+        state.filter = known ? want : "all";
+        if (!known) { try { history.replaceState(null, "", "#posts"); } catch (e) {} }
+      } else { state.filter = "all"; state.query = ""; }
       renderAssignments();
     } else renderHome();
     document.querySelectorAll(".nav-links a, .mobile-menu a").forEach(function (a) {
