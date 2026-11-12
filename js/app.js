@@ -138,7 +138,7 @@
 
   function sortedPosts() {
     return (state.data.posts || []).filter(function (p) { return !p.draft; }).slice().sort(function (a, b) {
-      return String(b.date).localeCompare(String(a.date));
+      return String(b.date).localeCompare(String(a.date)) || (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
     });
   }
 
@@ -323,7 +323,19 @@
         "<p>" + (q ? "Nothing matches “" + esc(state.query) + "”." : "Posts about " + esc(cat || "this topic") + " will appear here.") + "</p></div>";
       return;
     }
-    list.innerHTML = '<div class="grid-posts">' + posts.map(function (p) {
+    var groups = [], seen = {};
+    posts.forEach(function (p) {
+      var key = String(p.date).slice(0, 7);
+      if (!seen[key]) { seen[key] = { key: key, posts: [] }; groups.push(seen[key]); }
+      seen[key].posts.push(p);
+    });
+    list.innerHTML = groups.map(function (g) {
+      return '<div class="month-group"><div class="month-label"><span class="display">' + formatDate(g.key) + '</span><span class="mono muted">' + g.posts.length + (g.posts.length === 1 ? " post" : " posts") + "</span></div>" + cardsHtml(g.posts) + "</div>";
+    }).join("");
+  }
+
+  function cardsHtml(posts) {
+    return '<div class="grid-posts">' + posts.map(function (p) {
       return '<a class="card" href="#post-' + esc(p.id) + '"><div class="flex flex-wrap gap-2">' + tags(p.categories) + "</div>" +
         "<h3>" + esc(p.title) + "</h3><p>" + esc(p.excerpt || "") + "</p>" +
         '<div class="card-meta"><span class="mono">' + formatDate(p.date) + "</span><span style=\"flex:1\"></span>" + formatIcons(p) + "</div></a>";
