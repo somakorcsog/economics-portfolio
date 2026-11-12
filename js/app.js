@@ -238,10 +238,11 @@
   function countUp() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     app.querySelectorAll(".glance .num").forEach(function (el) {
-      var target = parseInt(el.textContent, 10), t0 = performance.now();
+      var target = parseInt(el.textContent, 10), t0 = performance.now() + 250;
       if (!target) return;
+      el.textContent = "0";
       (function step(now) {
-        var k = Math.min(1, (now - t0) / 1100);
+        var k = Math.max(0, Math.min(1, (now - t0) / 1200));
         el.textContent = Math.round(target * (1 - Math.pow(1 - k, 3)));
         if (k < 1) requestAnimationFrame(step);
       })(t0);
@@ -404,6 +405,24 @@
   }
 
   /* ---------- interactions ---------- */
+  var revealIO = null;
+  function setupReveal() {
+    if (revealIO) { revealIO.disconnect(); revealIO = null; }
+    if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var vh = window.innerHeight;
+    var els = app.querySelectorAll(".home-block, .article-body > *, .post-nav, .month, .prompt, .about > *, .term");
+    var pending = [];
+    els.forEach(function (el) { if (el.getBoundingClientRect().top > vh * 0.92) { el.classList.add("will-reveal"); pending.push(el); } });
+    if (!pending.length) return;
+    revealIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        revealIO.unobserve(e.target);
+        e.target.classList.add("is-in");
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+    pending.forEach(function (el) { revealIO.observe(el); });
+  }
   function setupReveal_unused() {
     if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     var vh = window.innerHeight;
@@ -474,7 +493,8 @@
     document.querySelectorAll(".nav-links a, .mobile-menu a").forEach(function (a) {
       if (a.getAttribute("href") === "#" + page) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
-    if (h.indexOf("post-") !== 0) window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    setupReveal();
     document.getElementById("progress").style.transform = "scaleX(0)";
   }
 
