@@ -1,0 +1,68 @@
+{
+  "site": {
+    "title": "Economics with Soma Korcsog",
+    "author": "Soma Korcsog",
+    "school": "",
+    "intro": "Assignments, interviews, podcasts and presentations from my Economics class. Markets, money, business cycles and what we learned outside the classroom."
+  },
+  "categories": [
+    "Introduction",
+    "Markets",
+    "Money",
+    "Business Cycles",
+    "Sustainability",
+    "Europe",
+    "International",
+    "Excursions & Events"
+  ],
+  "posts": [
+    {
+      "id": "wu-vienna-fma-breakfast",
+      "title": "Visit to WU Vienna: FMA Breakfast & Classmate Interview",
+      "date": "2026-11",
+      "categories": ["Excursions & Events", "Money"],
+      "featured": true,
+      "excerpt": "Our class visited WU Vienna (Vienna University of Economics and Business) for the FMA Breakfast. Afterwards I interviewed a classmate about what we learned about Austria's Financial Market Authority.",
+      "blocks": [
+        {
+          "type": "text",
+          "content": [
+            "In November 2026 our Economics class visited **WU Vienna** (Vienna University of Economics and Business) to attend the **FMA Breakfast**, an event hosted by the Austrian Financial Market Authority (FMA).",
+            "",
+            "After the event I filmed a short interview with a classmate about our impressions of the university and what we learned about how financial markets in Austria are supervised."
+          ]
+        },
+        {
+          "type": "video",
+          "src": "media/wu-interview.mp4",
+          "poster": "",
+          "title": "Classmate interview: our day at WU Vienna",
+          "caption": "Filmed after the FMA Breakfast at WU Vienna, November 2026."
+        },
+        {
+          "type": "heading",
+          "text": "FMA Focus Area"
+        },
+        {
+          "type": "notes",
+          "label": "From the class handout",
+          "content": [
+            "### What is the FMA?",
+            "_Paste your notes from the handout here._",
+            "",
+            "### Main focus areas",
+            "- _Focus area 1_",
+            "- _Focus area 2_",
+            "- _Focus area 3_",
+            "",
+            "### Key terms",
+            "- **Term:** _explanation_",
+            "",
+            "### My reflection",
+            "_What did I find most interesting, and why does financial market supervision matter for ordinary people?_"
+          ]
+        }
+      ]
+    }
+  ]
+}
