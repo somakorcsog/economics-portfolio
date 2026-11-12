@@ -30,6 +30,248 @@
   },
   "posts": [
     {
+      "id": "money-laundering-danske-bank",
+      "title": "Money Laundering: How Criminals Use a Bank",
+      "date": "2026-11-06",
+      "categories": [
+        "Money",
+        "International"
+      ],
+      "excerpt": "Team assignment: explain one method of money laundering. Our example is Danske Bank in Estonia, where around 200 billion euros passed through one small branch.",
+      "blocks": [
+        {
+          "type": "notes",
+          "label": "Assignment",
+          "content": [
+            "Explain one method of money laundering."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Money Laundering through a Bank"
+        },
+        {
+          "type": "text",
+          "content": [
+            "A bank is often needed for money laundering. Criminals need a way to move large amounts of money through the financial system so that it looks legal. One well-known example is **Danske Bank in Estonia**.",
+            "",
+            "Between **2007 and 2015**, around **200 billion euros** from foreign customers passed through one small branch of the bank. Many of these customers were **shell companies**: companies that exist on paper but have no real business. The bank later admitted that many of these payments were probably suspicious."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "How the case was uncovered"
+        },
+        {
+          "type": "text",
+          "content": [
+            "A manager called **Howard Wilkinson** became suspicious because one company moved huge amounts of money, even though its records showed no assets. He reported this internally in **2013**. His reports later helped uncover the whole case.",
+            "",
+            "In **2022**, Danske Bank pleaded guilty in the United States and had to pay around **2 billion US dollars**."
+          ]
+        },
+        {
+          "type": "notes",
+          "label": "Key terms",
+          "content": [
+            "- **Money laundering:** making money from crime look like it comes from a legal source.",
+            "- **Shell company:** a company that exists only on paper and has no real business activity.",
+            "- **Whistleblower:** an employee who reports wrongdoing inside their own organisation."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "memecoins-explained",
+      "title": "Memecoins Explained in One Minute",
+      "date": "2026-11-06",
+      "categories": [
+        "Money",
+        "Markets"
+      ],
+      "excerpt": "FMA task: explain one financial term in one minute. Memecoins are cryptocurrencies born from internet jokes and trends, and they can rise and crash very fast.",
+      "blocks": [
+        {
+          "type": "notes",
+          "label": "Assignment",
+          "content": [
+            "FMA challenge: explain one term in one minute."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "What are memecoins?"
+        },
+        {
+          "type": "text",
+          "content": [
+            "Memecoins are cryptocurrencies that often start from an internet joke or trend, for example **PepeCoin** or **Banana Coin**. Their value can rise very quickly, but it can crash just as fast.",
+            "",
+            "Many people buy them when everyone is talking about them, and then lose money as soon as the hype is over."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Memecoins vs. Bitcoin"
+        },
+        {
+          "type": "text",
+          "content": [
+            "Bitcoin is different. It was the **first crypto asset**, its supply is limited to **21 million coins**, and many people see it as **digital gold**.",
+            "",
+            "Memecoins are mostly about **speculation**. They often have no clear purpose, and sometimes there is even fraud behind them. That is why you should never invest just because of big promises of profit."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Hype is not a strategy."
+        }
+      ]
+    },
+    {
+      "id": "gewinn-fair-2026",
+      "title": "GEWINN Fair 2026: Careers, Austria's Economy and Money Mistakes",
+      "date": "2026-10-23",
+      "categories": [
+        "Excursions & Events",
+        "Business Cycles",
+        "International"
+      ],
+      "excerpt": "Notes from three talks at the GEWINN fair in Vienna: what to do after school, how Austria's economy is doing in global competition, and Gerald Hörhan on six common money mistakes.",
+      "blocks": [
+        {
+          "type": "text",
+          "content": [
+            "On **Friday, 23 October 2026**, we visited the **GEWINN fair** in Vienna. We listened to three talks and took notes. Here is a summary of what we learned."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "1. After school, what next?"
+        },
+        {
+          "type": "text",
+          "content": [
+            "The first talk was about choosing a path after school. Questions we discussed:",
+            "",
+            "- What do I want to study or work as?",
+            "- A degree from a university of applied sciences (FH) and a university degree are **equivalent**.",
+            "- Is Erasmus or going abroad worth it?",
+            "- How an FH studies programme can prepare you for a successful life."
+          ]
+        },
+        {
+          "type": "notes",
+          "label": "Tips from the talk",
+          "content": [
+            "- Get information everywhere you can.",
+            "- Being satisfied with what you do matters most.",
+            "- Follow your interests.",
+            "- Don't be afraid and be brave: there are many options.",
+            "- Always ask questions."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "2. Quo vadis, Austria?"
+        },
+        {
+          "type": "text",
+          "content": [
+            "_Austria's economy in national and international competition, with Stefan Bruckbauer._",
+            "",
+            "### What drives the economy right now",
+            "- **Energy prices, war and AI** are moving prices. Everyone wants AI, which needs a lot of investment and creates economic growth.",
+            "- China's exports of goods are **70% higher** than five years ago, while Europe's are **10% lower**.",
+            "- Gas is about **1.5 times** as expensive as before, oil about **twice** as expensive.",
+            "- Everything negative also hits Austria, but Germany is hit even harder.",
+            "",
+            "### How is Austria doing?",
+            "According to the media, very badly, and real GDP growth seems to confirm it: Austria is doing worse than the European average. The main reason is the **construction sector**, where the boom has ended. Retail is also weak, while the public sector and industry are doing better.",
+            "",
+            "In the USA, growth is driven almost only by AI, but around 80% of people do not benefit from it.",
+            "",
+            "If you look at **consumer sentiment**, Austrians are actually better off than people in China or the USA. Still, people everywhere are as pessimistic as they have not been in 50 years, especially since Covid-19 (in the USA mainly because of tariffs and interest rates).",
+            "",
+            "### Why interest rates have risen",
+            "1. **Inflation** caused by energy prices.",
+            "2. A lot of **new debt**, especially because of AI investment.",
+            "",
+            "On the positive side, AI will make each worker more **productive**.",
+            "",
+            "### Energy",
+            "Everyone is worried about not having enough energy, because gas storage levels are the lowest in 25 years. The speaker's point: we should switch to green energy not only because of climate change, but because fossil energy keeps getting more expensive.",
+            "",
+            "### The global picture",
+            "- Half of the world's stock market is moved by only **25 companies**. AI will work, but can companies really earn that much money with it? If someone offers it cheaper, the stock market could shake.",
+            "- **Every third good** in the world is produced in China, and **every third service** comes from the USA.",
+            "- Europe already pays more to the USA for IT and software than it earns from exporting goods there. The USA also dominates in space.",
+            "- The USA is so dominant because it has so much capital: US companies are worth about **10 times** as much on the stock market as European ones. But about **10%** of the US stock market is owned by Europeans.",
+            "- The US boom mostly benefits companies and their owners: **10% of the population** receive **80%** of the dividends.",
+            "",
+            "Austria has to save more because of its debt, but it is still doing better than the European average."
+          ]
+        },
+        {
+          "type": "notes",
+          "label": "Conclusion",
+          "content": [
+            "Overall, things don't look too bad: there will be more growth and less inflation. But there are big challenges. Companies have to become more dynamic, Europe has to respond to cheap imports from China, and in the EU society is more equal than in the USA or China."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "3. Gerald Hörhan: Succeeding in wild times"
+        },
+        {
+          "type": "text",
+          "content": [
+            "_Gerald Hörhan (Investment Punk Academy) on how to be successful in uncertain times._",
+            "",
+            "His starting point: you have to know **what you want, what you don't want, and where you want to go**. He told us that at 12 or 13 he looked at how most people live and decided he wanted money and a good life. His motto: _\"Never bow to anybody.\"_",
+            "",
+            "### His advice",
+            "- Work hard and choose an industry where you can earn money.",
+            "- AI will replace jobs in many areas, so think about where future-proof jobs are.",
+            "- Consider becoming an **entrepreneur**: lower taxes and more sources of income.",
+            "- Understand **tax law**, so the state doesn't take everything.",
+            "- Don't waste your money: in his view, buying your own home is the biggest financial mistake of the middle class. Instead, buy a small one-room flat regularly and rent it out. Don't buy a new car either, because it loses more than half of its value in three years.",
+            "- **Invest in a structured way.**",
+            "",
+            "### Six financial mistakes",
+            "1. Buying a home on credit far out in the countryside",
+            "2. Consumer debt",
+            "3. Believing your employee job is safe",
+            "4. Not understanding taxes",
+            "5. Expensive relationships and divorce",
+            "6. Not understanding AI",
+            "",
+            "### AI and the future",
+            "He believes AI will soon make many decisions for us, from dates to cars and travel. We should become the people who **build the algorithms and AI models** and keep our own logical thinking. In his view, this will be the industry where the most money is made, also in Europe. Everyone should try coding with AI, and use a second AI tool to check the results.",
+            "",
+            "He also said that school did not help him much, except for logical thinking, discipline, and economics and accounting."
+          ]
+        },
+        {
+          "type": "notes",
+          "label": "His four rules",
+          "content": [
+            "- Stay healthy",
+            "- Be honest",
+            "- Use your full potential",
+            "- Get rich"
+          ]
+        },
+        {
+          "type": "notes",
+          "label": "My reflection",
+          "content": [
+            "_Add your own opinion here: which talk did you find most useful, and do you agree with Hörhan's advice?_"
+          ]
+        }
+      ]
+    },
+    {
       "id": "wu-vienna-fma-breakfast",
       "title": "Visit to WU Vienna: FMA Breakfast & Classmate Interview",
       "date": "2026-11",
