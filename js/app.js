@@ -151,10 +151,11 @@
     root.querySelectorAll("[data-video]").forEach(function (frame) {
       var video = frame.querySelector("video"), tpl = frame.querySelector("template");
       if (!video || !tpl) return;
-      var swap = function () { if (frame.contains(video)) { frame.classList.remove("portrait"); frame.innerHTML = tpl.innerHTML; } };
+      var swap = function () { var fig = frame.closest("figure"); if (fig && fig.parentNode) fig.parentNode.removeChild(fig); };
       var source = video.querySelector("source");
       if (source) source.addEventListener("error", swap);
       video.addEventListener("error", swap);
+      if (video.networkState === 3) swap();
     });
     root.querySelectorAll("[data-quiz]").forEach(function (quiz) {
       var qs = quiz.querySelectorAll(".q"), done = 0, right = 0, score = quiz.querySelector("[data-score]");
@@ -193,6 +194,7 @@
     posts().forEach(function (p) { (p.categories || []).forEach(function (x) { c[x] = (c[x] || 0) + 1; }); });
     return c;
   }
+  function topics() { var c = counts(); return (state.data.categories || []).filter(function (x) { return c[x] > 0; }); }
   function schoolLine() { var s = state.data.site || {}; return s.school ? s.school + (s.city ? ", " + s.city : "") : ""; }
   function pageHead(kicker, title, sub) {
     return '<header class="page-head container"><div class="eyebrow">' + esc(kicker) + '</div><h1>' + esc(title) + "</h1>" + (sub ? "<p>" + esc(sub) + "</p>" : "") + "</header>";
@@ -221,7 +223,7 @@
       '<div class="tiles three">' + latest.map(tile).join("") + "</div></section>";
 
     h += '<section class="home-block container"><div class="block-head"><h2>Browse by topic</h2><a class="link" href="#posts">All topics</a></div>' +
-      '<div class="topic-grid">' + (d.categories || []).map(function (cat, i) {
+      '<div class="topic-grid">' + topics().map(function (cat, i) {
         return '<a class="topic-mini tone-' + TONES[i % 4] + '" href="#topic-' + slug(cat) + '"><span class="count">' + (c[cat] || 0) + (c[cat] === 1 ? " post" : " posts") + "</span><h3>" + esc(cat) + "</h3><p>" + esc((d.topicDescriptions || {})[cat] || "") + "</p></a>";
       }).join("") + "</div></section>";
 
@@ -253,13 +255,18 @@
     app.innerHTML = pageHead("School year " + (d.site.schoolYear || ""), "Assignments", "Every assignment of the school year, newest first.") +
       '<div class="layout container"><aside class="sidebar">' +
       '<label class="search-wrap"><span class="sr-only">Search assignments</span>' + SEARCH_ICON + '<input id="search" class="search" type="search" placeholder="Search assignments" value="' + esc(state.query) + '"></label>' +
-      '<div class="side-label">Topics</div><nav class="side-nav" aria-label="Filter by topic">' +
-      '<button type="button" data-filter="all" aria-pressed="' + (state.filter === "all") + '"><span>All posts</span><span class="n">' + all.length + "</span></button>" +
-      (d.categories || []).map(function (cat) {
+      '<nav class="side-nav" aria-label="Filter by topic">' +
+      '<button type="button" class="all-btn" data-filter="all" aria-pressed="' + (state.filter === "all") + '"><span><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect x="1" y="1" width="5" height="5" rx="1.2" fill="currentColor"/><rect x="8" y="1" width="5" height="5" rx="1.2" fill="currentColor"/><rect x="1" y="8" width="5" height="5" rx="1.2" fill="currentColor"/><rect x="8" y="8" width="5" height="5" rx="1.2" fill="currentColor"/></svg>All assignments</span><span class="n">' + all.length + "</span></button>" +
+      '<div class="side-label">Topics</div>' +
+      topics().map(function (cat) {
         return '<button type="button" data-filter="' + slug(cat) + '" aria-pressed="' + (state.filter === slug(cat)) + '"><span>' + esc(cat) + '</span><span class="n">' + (c[cat] || 0) + "</span></button>";
       }).join("") + "</nav></aside>" +
       '<div class="main-col"><div class="result-line" id="result-line"></div><div id="post-list"></div></div></div>';
     renderList();
+    document.getElementById("result-line").addEventListener("click", function (e) {
+      var clr = e.target.closest && e.target.closest("[data-clear]");
+      if (clr) { var a = app.querySelector('[data-filter="all"]'); if (a) a.click(); }
+    });
     app.querySelectorAll("[data-filter]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         state.filter = btn.getAttribute("data-filter");
@@ -283,7 +290,8 @@
     });
     var catName = state.filter === "all" ? "All topics" : (cats.filter(function (c) { return slug(c) === state.filter; })[0] || "");
     var rl = document.getElementById("result-line");
-    if (rl) rl.textContent = catName + " · " + res.length + (res.length === 1 ? " assignment" : " assignments") + (q ? " matching “" + state.query + "”" : "");
+    if (rl) rl.innerHTML = "<span>" + esc(catName) + " · " + res.length + (res.length === 1 ? " assignment" : " assignments") + (q ? " matching “" + esc(state.query) + "”" : "") + "</span>" +
+      (state.filter !== "all" ? '<button type="button" class="clear-chip" data-clear>Show all assignments <span aria-hidden="true">×</span></button>' : "");
     if (!res.length) {
       list.innerHTML = '<div class="empty"><strong>No assignments here yet</strong>' + (q ? "Nothing matches “" + esc(state.query) + "”." : "Posts for this topic will appear here.") + "</div>";
       return;
@@ -423,7 +431,7 @@
     document.getElementById("site-title").textContent = t;
     document.getElementById("footer-title").textContent = t;
     document.getElementById("footer-meta").textContent = [site.school && site.school + (site.city ? ", " + site.city : ""), site.schoolYear && "School year " + site.schoolYear].filter(Boolean).join(" · ");
-    document.getElementById("footer-topics").innerHTML = (state.data.categories || []).map(function (c) { return '<a href="#topic-' + slug(c) + '">' + esc(c) + "</a>"; }).join("");
+    document.getElementById("footer-topics").innerHTML = topics().map(function (c) { return '<a href="#topic-' + slug(c) + '">' + esc(c) + "</a>"; }).join("");
 
     var mb = document.getElementById("menu-btn"), mm = document.getElementById("mobile-menu");
     mb.addEventListener("click", function () { mm.hidden = !mm.hidden; mb.setAttribute("aria-expanded", String(!mm.hidden)); });

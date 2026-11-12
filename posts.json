@@ -16,22 +16,16 @@
     ]
   },
   "categories": [
-    "Introduction",
     "Markets",
     "Money",
     "Business Cycles",
-    "Sustainability",
-    "Europe",
     "International",
     "Excursions & Events"
   ],
   "topicDescriptions": {
-    "Introduction": "What economics is about: scarcity, choices and how economists think.",
     "Markets": "Supply and demand, prices and competition.",
     "Money": "Banks, the ECB, inflation and financial markets.",
     "Business Cycles": "Growth, recessions, unemployment and economic policy.",
-    "Sustainability": "Climate, resources and a greener economy.",
-    "Europe": "The EU, the euro and the single market.",
     "International": "Trade, globalisation and exchange rates.",
     "Excursions & Events": "Visits, talks and what we learned outside school."
   },
@@ -340,13 +334,6 @@
             "- Use your full potential",
             "- Get rich"
           ]
-        },
-        {
-          "type": "notes",
-          "label": "My reflection",
-          "content": [
-            "_Add your own opinion here: which talk did you find most useful, and do you agree with Hörhan's advice?_"
-          ]
         }
       ],
       "coverArt": {
@@ -369,17 +356,8 @@
         {
           "type": "text",
           "content": [
-            "On **6 November 2026** our Economics class visited **WU Vienna** (Vienna University of Economics and Business) for the **3rd Financial Education Breakfast** (Finanzbildungsfrühstück). It was organised by the **WU Competence Center for Financial Literacy** and the **Austrian Financial Market Authority (FMA)** in Festsaal 1 of the LC building on the WU campus.",
-            "",
-            "After the event I filmed a short interview with a classmate about our impressions."
+            "On **6 November 2026** our Economics class visited **WU Vienna** (Vienna University of Economics and Business) for the **3rd Financial Education Breakfast** (Finanzbildungsfrühstück). It was organised by the **WU Competence Center for Financial Literacy** and the **Austrian Financial Market Authority (FMA)** in Festsaal 1 of the LC building on the WU campus."
           ]
-        },
-        {
-          "type": "video",
-          "src": "media/wu-interview.mp4",
-          "poster": "",
-          "title": "Classmate interview: our day at WU Vienna",
-          "caption": "Filmed after the FMA Breakfast at WU Vienna, 6 November 2026."
         },
         {
           "type": "heading",
@@ -409,15 +387,11 @@
           ]
         },
         {
-          "type": "notes",
-          "label": "My notes",
-          "content": [
-            "### What I learned",
-            "- _Paste your own notes from the handout here._",
-            "",
-            "### My reflection",
-            "_Which warning signs of financial fraud do you remember, and why are young people a target?_"
-          ]
+          "type": "video",
+          "src": "media/wu-interview.mp4",
+          "poster": "",
+          "title": "Classmate interview: our day at WU Vienna",
+          "caption": "After the event I filmed a short interview with a classmate about our impressions."
         }
       ],
       "coverArt": {
@@ -431,7 +405,6 @@
       "title": "How Does the Economy Work?",
       "date": "2026-10-10",
       "categories": [
-        "Introduction",
         "Markets",
         "Business Cycles"
       ],
@@ -537,7 +510,6 @@
       "date": "2026-10-22",
       "categories": [
         "Excursions & Events",
-        "Europe",
         "International",
         "Money"
       ],
@@ -620,13 +592,6 @@
             "### Hidden champions",
             "Austria has many **hidden champions**: companies that most people have never heard of, but that produce a lot and are often world market leaders in a small niche. The panel discussed how important these firms are for Austria's economy and jobs."
           ]
-        },
-        {
-          "type": "notes",
-          "label": "My reflection",
-          "content": [
-            "_Add your opinion here: is quality of life more important than economic growth? Would you use a digital euro?_"
-          ]
         }
       ],
       "coverArt": {
@@ -637,7 +602,6 @@
     }
   ],
   "topicImages": {
-    "Introduction": "media/wb-wants.jpg",
     "Markets": "media/wb-supply-demand.jpg",
     "Business Cycles": "media/wb-cycle.jpg"
   },
@@ -825,6 +789,18 @@
       {
         "label": "Structure",
         "text": "Make the whole website clearer and better organised, and focus on the laptop view first."
+      },
+      {
+        "label": "Animations",
+        "text": "Add animations wherever they look good."
+      },
+      {
+        "label": "Clean-up",
+        "text": "Remove all topics that have no posts or that we don't really need, and hide unfinished placeholders. Fix the WU post so it gets to the content faster."
+      },
+      {
+        "label": "Navigation",
+        "text": "On the Assignments page, make \"All\" stand out so it is easy to get back to every assignment after choosing a topic."
       }
     ]
   }
