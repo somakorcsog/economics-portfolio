@@ -830,6 +830,10 @@
       {
         "label": "Naming",
         "text": "Change \"Glossary\" to a simpler word."
+      },
+      {
+        "label": "Fix",
+        "text": "Keep my name \"Soma Korcsog\" together on one line in the big heading, like before."
       }
     ]
   },

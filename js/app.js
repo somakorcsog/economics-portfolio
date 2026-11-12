@@ -209,7 +209,7 @@
     var mo = d.makingOf;
     var h = '<section class="home-hero container">' +
       '<div class="home-hero-text"><div class="hero-kicker">' + esc("School year " + (site.schoolYear || "")) + "</div>" +
-      "<h1>Economics.<span>" + esc(site.author ? "with " + site.author + "." : "") + "</span></h1>" +
+      "<h1>Economics.<span>" + (site.author ? "with " + '<span class="nowrap">' + esc(site.author) + ".</span>" : "") + "</span></h1>" +
       '<p class="hero-sub">Assignments, videos, interviews and excursions from my Economics class.</p>' +
       '<p class="hero-note"><span class="live-dot" aria-hidden="true"></span>New content every week' + (lastUpdated() ? '<span class="hero-note-sep" aria-hidden="true">·</span><span class="hero-note-date">Last updated ' + esc(lastUpdated()) + "</span>" : "") + "</p>" +
       '<div class="hero-actions"><a class="btn" href="#posts">View all assignments</a>' +
