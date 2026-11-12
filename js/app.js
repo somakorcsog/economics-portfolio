@@ -198,6 +198,7 @@
     h += '<section class="hero container"><div class="hero-kicker">' + esc(["School year " + (site.schoolYear || ""), schoolLine].filter(Boolean).join(" · ")) + "</div>" +
       "<h1>Economics.<span>" + esc(site.author ? "with " + site.author + "." : "") + "</span></h1>" +
       '<p class="hero-sub">Assignments, videos, interviews and excursions from my Economics class.</p>' +
+      '<p class="hero-note"><span class="live-dot" aria-hidden="true"></span>New content every week</p>' +
       '<div class="hero-actions"><a class="btn" href="#posts">View assignments</a>' +
       (featured ? '<a class="link" href="#post-' + esc(featured.id) + '">Read the latest</a>' : "") + "</div>" +
       '<div class="hero-stats">' + stat(all.length, "Assignments") + stat(counts["Excursions & Events"] || 0, "Excursions & events") + stat(all.filter(hasVideo).length, "Videos") + stat((d.glossary || []).length, "Key terms") + "</div>" +

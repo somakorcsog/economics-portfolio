@@ -817,6 +817,10 @@
       {
         "label": "Structure",
         "text": "If you can't add other photos, remove the five images people see right when the website loads, because they don't look good. And give the website a better structure overall."
+      },
+      {
+        "label": "Update",
+        "text": "Add a note to the website that new content comes out every week."
       }
     ]
   }
