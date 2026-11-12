@@ -338,7 +338,7 @@ h1, h2, h3 { text-wrap: balance; }
 .home-hero-text { text-align: left; }
 .home-hero h1 { font-size: clamp(3rem, 6.4vw, 5.4rem); font-weight: 700; letter-spacing: -0.05em; line-height: .98; margin-top: 12px; }
 .home-hero h1 span { display: block; color: var(--muted); }
-.home-hero h1 .nowrap { display: inline; white-space: nowrap; }
+.home-hero h1 .hero-name { white-space: nowrap; font-size: clamp(1.9rem, 4.6vw, 4.1rem); letter-spacing: -0.045em; margin-top: 6px; }
 .home-hero .hero-sub { margin: 20px 0 0; max-width: 32ch; }
 .home-hero .hero-actions { justify-content: flex-start; }
 .glance { background: var(--tile); border-radius: var(--r-lg); box-shadow: var(--shadow); padding: 28px; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
@@ -550,3 +550,4 @@ h1, h2, h3 { text-wrap: balance; }
 .cover { min-width: 0; }
 .cover-art .big, .cover-art .small { overflow-wrap: anywhere; max-width: 100%; }
 [hidden] { display: none !important; }
+@media (max-width: 600px) { .hero-note { flex-wrap: wrap; row-gap: 2px; border-radius: 16px; } .hero-note-sep { display: none; } .hero-note-date { flex-basis: 100%; padding-left: 16px; } }
