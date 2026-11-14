@@ -3,7 +3,8 @@
 (function () {
   "use strict";
 
-  var state = { data: null, filter: "all", query: "", glossaryQuery: "" };
+  var state = { data: null, filter: "all", query: "", glossaryQuery: "", view: "list" };
+  try { if (localStorage.getItem("view") === "cards") state.view = "cards"; } catch (e) {}
   var app = document.getElementById("app");
   var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -197,8 +198,8 @@
   function topics() { var c = counts(); return (state.data.categories || []).filter(function (x) { return c[x] > 0; }); }
   function lastUpdated() { var p = posts().slice().sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); })[0]; return p ? formatDate(p.date) : ""; }
   function schoolLine() { var s = state.data.site || {}; return s.school ? s.school + (s.city ? ", " + s.city : "") : ""; }
-  function pageHead(kicker, title, sub) {
-    return '<header class="page-head container"><div class="eyebrow">' + esc(kicker) + '</div><h1>' + esc(title) + "</h1>" + (sub ? "<p>" + esc(sub) + "</p>" : "") + "</header>";
+  function pageHead(kicker, title, sub, accent) {
+    return '<header class="page-head container"><div class="eyebrow">' + esc(kicker) + '</div><h1>' + esc(title) + (accent ? ' <span class="accent">' + esc(accent) + "</span>" : "") + "</h1>" + (sub ? "<p>" + esc(sub) + "</p>" : "") + "</header>";
   }
   function stat(n, label) { return '<div class="stat"><div class="num">' + n + '</div><div class="lbl">' + esc(label) + "</div></div>"; }
 
@@ -220,18 +221,16 @@
       (site.schoolYear ? "<div><dt>School year</dt><dd>" + esc(site.schoolYear) + "</dd></div>" : "") +
       "<div><dt>Subject</dt><dd>" + esc(site.subject || "Economics") + "</dd></div></dl></aside></section>";
 
-    h += '<section class="home-block container"><div class="block-head"><h2>Latest assignments</h2><a class="link" href="#posts">See all ' + all.length + "</a></div>" +
-      '<div class="tiles three">' + latest.map(tile).join("") + "</div></section>";
+    h += '<section class="home-block container"><div class="block-head"><h2>Latest <span class="accent">assignments.</span></h2><a class="link" href="#posts">See all ' + all.length + "</a></div>" +
+      '<div class="tiles three">' + latest.map(tile).join("") + "</div>" +
+      '<nav class="topic-row" aria-label="Topics"><span class="topic-row-label">Browse by topic</span>' + topics().map(function (cat) {
+        return '<a href="#topic-' + slug(cat) + '">' + esc(cat) + '<span>' + (c[cat] || 0) + "</span></a>";
+      }).join("") + "</nav></section>";
 
-    h += '<section class="home-block container"><div class="block-head"><h2>Browse by topic</h2><a class="link" href="#posts">All topics</a></div>' +
-      '<div class="topic-grid">' + topics().map(function (cat, i) {
-        return '<a class="topic-mini tone-' + TONES[i % 4] + '" href="#topic-' + slug(cat) + '"><span class="count">' + (c[cat] || 0) + (c[cat] === 1 ? " post" : " posts") + "</span><h3>" + esc(cat) + "</h3><p>" + esc((d.topicDescriptions || {})[cat] || "") + "</p></a>";
-      }).join("") + "</div></section>";
-
-    if (d.challenge) h += '<section class="home-block container"><a class="challenge-banner" href="#quiz"><div><div class="eyebrow">Economics Challenge</div><h3>Bored? Test yourself in ' + (d.challenge.rounds || 10) + ' quick questions.</h3><p>Answer fast for more points. Can you beat your best score?</p></div><span class="btn">Play now</span></a></section>';
-    h += '<section class="home-block container"><div class="duo">' +
+    h += '<section class="home-block container"><div class="block-head"><h2>More to <span class="accent">explore.</span></h2></div><div class="trio">' +
+      (d.challenge ? '<a class="promo dark" href="#quiz"><div class="eyebrow">Quiz</div><h3>Bored? Test yourself in ' + (d.challenge.rounds || 10) + ' quick questions.</h3><span class="link">Play the challenge</span></a>' : "") +
       '<a class="promo" href="#glossary"><div class="eyebrow">Key terms</div><h3>' + (d.glossary || []).length + " key terms, explained in one sentence.</h3><span class=\"link\">See all key terms</span></a>" +
-      (mo && mo.prompts ? '<a class="promo dark" href="#making-of"><div class="eyebrow">How it was made</div><h3>Built with ' + mo.prompts.length + ' prompts, not code.</h3><span class="link">See the prompts</span></a>' : "") +
+      (mo && mo.prompts ? '<a class="promo" href="#making-of"><div class="eyebrow">How it was made</div><h3>Built with ' + mo.prompts.length + ' prompts, not code.</h3><span class="link">See the prompts</span></a>' : "") +
       "</div></section>";
     app.innerHTML = h;
     countUp();
@@ -255,7 +254,7 @@
   function renderAssignments() {
     var d = state.data, c = counts(), all = posts();
     document.title = "Assignments · " + (d.site.title || "Economics");
-    app.innerHTML = pageHead("School year " + (d.site.schoolYear || ""), "Assignments", "Every assignment of the school year, newest first.") +
+    app.innerHTML = pageHead("School year " + (d.site.schoolYear || ""), "All", "Every assignment of the school year, newest first.", "assignments.") +
       '<div class="layout container"><aside class="sidebar">' +
       '<label class="search-wrap"><span class="sr-only">Search assignments</span>' + SEARCH_ICON + '<input id="search" class="search" type="search" placeholder="Search assignments" value="' + esc(state.query) + '"></label>' +
       '<nav class="side-nav" aria-label="Filter by topic">' +
@@ -267,6 +266,8 @@
       '<div class="main-col"><div class="result-line" id="result-line"></div><div id="post-list"></div></div></div>';
     renderList();
     document.getElementById("result-line").addEventListener("click", function (e) {
+      var vb = e.target.closest && e.target.closest("[data-view]");
+      if (vb) { state.view = vb.getAttribute("data-view"); try { localStorage.setItem("view", state.view); } catch (err) {} renderList(); return; }
       var clr = e.target.closest && e.target.closest("[data-clear]");
       if (clr) { var a = app.querySelector('[data-filter="all"]'); if (a) a.click(); }
     });
@@ -307,7 +308,8 @@
     var catName = state.filter === "all" ? "All topics" : (cats.filter(function (c) { return slug(c) === state.filter; })[0] || "");
     var rl = document.getElementById("result-line");
     if (rl) rl.innerHTML = "<span>" + esc(catName) + " · " + res.length + (res.length === 1 ? " assignment" : " assignments") + (q ? " matching “" + esc(state.query) + "”" : "") + "</span>" +
-      (state.filter !== "all" ? '<button type="button" class="clear-chip" data-clear>Show all assignments <span aria-hidden="true">×</span></button>' : "");
+      (state.filter !== "all" ? '<button type="button" class="clear-chip" data-clear>Show all assignments <span aria-hidden="true">×</span></button>' : "") +
+      '<span class="view-toggle" role="group" aria-label="View"><button type="button" data-view="list" aria-pressed="' + (state.view !== "cards") + '">List</button><button type="button" data-view="cards" aria-pressed="' + (state.view === "cards") + '">Cards</button></span>';
     if (!res.length) {
       list.innerHTML = '<div class="empty"><strong>No assignments here yet</strong>' + (q ? "Nothing matches “" + esc(state.query) + "”." : "Posts for this topic will appear here.") + "</div>";
       return;
@@ -318,12 +320,18 @@
       if (!seen[key]) { seen[key] = { key: key, posts: [] }; groups.push(seen[key]); }
       seen[key].posts.push(p);
     });
+    var asList = state.view !== "cards";
     list.innerHTML = groups.map(function (g) {
       return '<div class="month"><div class="month-label">' + formatDate(g.key) + "<span>" + g.posts.length + (g.posts.length === 1 ? " post" : " posts") + "</span></div>" +
-        '<div class="tiles">' + g.posts.map(tile).join("") + "</div></div>";
+        (asList ? '<div class="rows">' + g.posts.map(row).join("") + "</div>" : '<div class="tiles">' + g.posts.map(tile).join("") + "</div>") + "</div>";
     }).join("");
   }
 
+  function row(p) {
+    return '<a class="row" href="#post-' + esc(p.id) + '"><span class="row-date">' + formatDate(p.date, true) + '</span>' +
+      '<span class="row-main"><span class="row-title">' + esc(p.title) + '</span><span class="row-sub">' + esc((p.categories || []).join(" · ")) + (p.excerpt ? " · " + esc(p.excerpt) : "") + "</span></span>" +
+      '<span class="row-kind">' + formatLabel(p) + '</span><span class="row-arrow" aria-hidden="true">→</span></a>';
+  }
   function tile(p) {
     return '<a class="tile" href="#post-' + esc(p.id) + '">' + cover(p) +
       '<div class="tile-body"><div class="tile-topics">' + esc((p.categories || []).join(" · ")) + "</div><h3>" + esc(p.title) + "</h3><p>" + esc(p.excerpt || "") + "</p>" +
@@ -336,7 +344,7 @@
     document.title = "Key terms · " + (d.site.title || "Economics");
     var letters = {};
     (d.glossary || []).forEach(function (t) { letters[t.term.charAt(0).toUpperCase()] = 1; });
-    app.innerHTML = pageHead("Key terms", "Key terms, simply explained", "Every important word from my assignments, explained in one sentence.") +
+    app.innerHTML = pageHead("Key terms", "Key terms,", "Every important word from my assignments, explained in one sentence.", "simply explained.") +
       '<div class="container"><div class="glossary-tools"><label class="search-wrap"><span class="sr-only">Search the key terms</span>' + SEARCH_ICON +
       '<input id="glossary-search" class="search" type="search" placeholder="Search terms, e.g. GDP" value="' + esc(state.glossaryQuery) + '"></label>' +
       '<div class="az">' + "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(function (l) {
@@ -373,7 +381,7 @@
   function renderAbout() {
     var d = state.data, site = d.site || {};
     document.title = "About · " + (site.title || "Economics");
-    app.innerHTML = pageHead("About", "About this portfolio", "") +
+    app.innerHTML = pageHead("About", "About this", "", "portfolio.") +
       '<div class="container about"><div class="prose">' + markdown(site.about || "") + "</div>" +
       '<dl class="facts">' +
       (site.author ? "<div><dt>Student</dt><dd>" + esc(site.author) + "</dd></div>" : "") +
@@ -559,7 +567,7 @@
     var c = state.data.challenge || { questions: [] };
     document.title = "Quiz · " + (state.data.site.title || "Economics");
     var best = bestScore();
-    app.innerHTML = pageHead("Quiz", c.title || "Economics Challenge", c.intro || "") +
+    app.innerHTML = pageHead("Quiz", "Economics", c.intro || "", "Challenge.") +
       '<div class="container"><div class="game" id="game"><div class="game-intro">' +
       '<div class="game-rules"><div><strong>' + (c.rounds || 10) + '</strong><span>questions</span></div><div><strong>' + (c.seconds || 20) + ' s</strong><span>per question</span></div><div><strong>1,000</strong><span>points max each</span></div><div><strong>' + (best ? best.toLocaleString("en") : "–") + '</strong><span>your best</span></div></div>' +
       '<p class="game-hint">Faster answers score more points, and a streak of correct answers earns a bonus. You can also answer with the keys 1 to 4.</p>' +
@@ -654,7 +662,7 @@
     var site = state.data.site || {};
     document.title = "Feedback · " + (site.title || "Economics");
     var types = ["Bug", "Slow or laggy", "Idea", "Other"];
-    app.innerHTML = pageHead("Feedback", "Found a bug or have an idea?", "Something not working, loading slowly, or a suggestion to make the site better? Send it here and it goes straight to me.") +
+    app.innerHTML = pageHead("Feedback", "Found a bug", "Something not working, loading slowly, or a suggestion to make the site better? Send it here and it goes straight to me.", "or an idea?") +
       '<div class="container"><form class="feedback" id="feedback-form" novalidate>' +
       '<fieldset class="fb-types"><legend>What is it about?</legend>' + types.map(function (t, i) {
         return '<label class="fb-chip"><input type="radio" name="type" value="' + esc(t) + '"' + (i === 0 ? " checked" : "") + "><span>" + esc(t) + "</span></label>";
