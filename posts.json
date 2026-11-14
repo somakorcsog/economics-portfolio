@@ -854,6 +854,10 @@
       {
         "label": "Hover effects",
         "text": "Make the site a bit more interactive: small movements when you hover over the logo, buttons, cards, numbers and footer links, plus a soft light that follows the mouse on the home page. We can remove it later if it's too much."
+      },
+      {
+        "label": "More movement",
+        "text": "Add more interactive things, or come up with your own ideas after looking at how other interactive websites do it. Things that constantly change or move on the screen are welcome too."
       }
     ]
   },
