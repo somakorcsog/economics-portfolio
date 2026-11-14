@@ -846,6 +846,10 @@
       {
         "label": "Check-up",
         "text": "Do a check-up of the whole website yourself and tell me what to improve and which bugs you find. Then fix them: search the full post text, always show all assignments from the menu, stop sideways scrolling on phones, and handle old topic links."
+      },
+      {
+        "label": "Calmer design",
+        "text": "Make the design calmer and clearer: fewer colours (only cream, navy and one accent), bold two-tone headings, show assignments as a list with a switch to cards, and a shorter home page with a slim topic row."
       }
     ]
   },
