@@ -478,6 +478,14 @@
 
   /* ---------- interactions ---------- */
   var revealIO = null;
+  document.addEventListener("pointermove", function (e) {
+    var g = e.target && e.target.closest && e.target.closest(".glance");
+    if (!g || e.pointerType !== "mouse") return;
+    var r = g.getBoundingClientRect();
+    g.style.setProperty("--mx", (e.clientX - r.left) + "px");
+    g.style.setProperty("--my", (e.clientY - r.top) + "px");
+  }, { passive: true });
+
   function setupReveal() {
     if (revealIO) { revealIO.disconnect(); revealIO = null; }
     if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;

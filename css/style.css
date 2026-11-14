@@ -605,3 +605,40 @@ h1, h2, h3 { text-wrap: balance; }
 .view-toggle { margin-left: auto; display: inline-flex; padding: 3px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line); }
 .view-toggle button { font: inherit; font-size: 13px; font-weight: 600; border: 0; background: transparent; color: var(--muted); padding: 5px 12px; border-radius: 999px; cursor: pointer; }
 .view-toggle button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+/* ---------- Hover interactions (Nov 14) ---------- */
+@keyframes k-hop { 0%,100% { transform: translateY(3px); } 40% { transform: translateY(-3px); } 70% { transform: translateY(4px); } }
+.brand:hover .logo span { animation: k-hop .5s cubic-bezier(.3,.7,.4,1); }
+.logo { transition: transform .35s cubic-bezier(.2,.8,.2,1), border-radius .35s; }
+.brand:hover .logo { transform: rotate(-8deg) scale(1.08); }
+
+.btn { transition: transform .2s, box-shadow .3s, filter .2s; }
+.btn:hover { box-shadow: 0 10px 24px -8px rgba(20,33,61,.45); transform: translateY(-1px); }
+.link::after { content: "›"; margin-left: .3em; display: inline-block; transition: transform .25s cubic-bezier(.2,.8,.2,1); }
+.link:hover::after, a:hover > .link::after, .promo:hover .link::after { transform: translateX(4px); }
+.link:hover { text-decoration: none; }
+
+.tile { border: 1px solid transparent; }
+.tile:hover { border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+.tile h3 { transition: color .25s; }
+.tile:hover h3, .row:hover .row-title { color: var(--accent); }
+.row-title { transition: color .25s; }
+.row:hover .row-arrow { transform: translate(3px, -3px); }
+.promo { border: 1px solid transparent; transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .3s, box-shadow .35s; }
+.promo:not(.dark):hover { border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+
+.glance-stats .num { transition: color .25s, transform .25s; }
+.glance-stats .stat:hover .num { color: var(--accent); transform: translateY(-2px); }
+
+.footer-links a { display: inline-block; width: fit-content; transition: transform .25s, color .25s; }
+.footer-links a:hover { transform: translateX(3px); color: var(--accent); text-decoration: none; }
+
+.glance { position: relative; overflow: hidden; isolation: isolate; }
+.glance::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .4s;
+  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%); }
+.glance:hover::before { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .brand:hover .logo span { animation: none; }
+  .btn:hover, .glance-stats .stat:hover .num, .footer-links a:hover, .link:hover::after, .promo:hover .link::after { transform: none; }
+}

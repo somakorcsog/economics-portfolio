@@ -850,6 +850,10 @@
       {
         "label": "Calmer design",
         "text": "Make the design calmer and clearer: fewer colours (only cream, navy and one accent), bold two-tone headings, show assignments as a list with a switch to cards, and a shorter home page with a slim topic row."
+      },
+      {
+        "label": "Hover effects",
+        "text": "Make the site a bit more interactive: small movements when you hover over the logo, buttons, cards, numbers and footer links, plus a soft light that follows the mouse on the home page. We can remove it later if it's too much."
       }
     ]
   },
