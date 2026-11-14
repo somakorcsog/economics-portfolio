@@ -314,37 +314,39 @@
     var cv = document.getElementById("hero-field");
     if (cv && cv.getContext) {
       var ctx = cv.getContext("2d"), W = 0, H = 0, dpr = Math.min(2, window.devicePixelRatio || 1), raf = 0, visible = true, t = 0;
-      var px = -9999, py = -9999, ripples = [];
+      var px = -9999, py = -9999, ripples = [], over = false, sp = 0, last = 0;
       var lines = [0, 1, 2].map(function (i) { return { y: .32 + i * .2, amp: 18 + i * 8, sp: .00018 + i * .00007, ph: Math.random() * 10, f: .0042 - i * .0008, a: .16 - i * .035 }; });
       var size = function () { var r = cv.getBoundingClientRect(); W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
       var color = function () { return getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#1f4b99"; };
       var col = color();
       var draw = function (now) {
-        raf = 0; if (!visible || document.hidden) return;
-        t = now; ctx.clearRect(0, 0, W, H);
+        raf = 0; if (!visible || document.hidden) { last = 0; return; }
+        var dt = last ? Math.min(50, now - last) : 16; last = now;
+        sp += ((over ? 1 : 0) - sp) * Math.min(1, dt / 260);
+        t += dt * sp; ctx.clearRect(0, 0, W, H);
         ripples = ripples.filter(function (r) { return now - r.t < 1400; });
         lines.forEach(function (L) {
           ctx.beginPath();
           for (var x = 0; x <= W; x += 6) {
             var y = H * L.y + Math.sin(x * L.f + t * L.sp * 6 + L.ph) * L.amp + Math.sin(x * L.f * 2.7 + t * L.sp * 9) * L.amp * .35;
             var dx = x - px, dy = y - py, d2 = dx * dx + dy * dy;
-            y += -36 * Math.exp(-d2 / 9000) * (dy < 0 ? -1 : 1);
+            y += -36 * sp * Math.exp(-d2 / 9000) * (dy < 0 ? -1 : 1);
             ripples.forEach(function (r) { var dd = Math.sqrt((x - r.x) * (x - r.x) + (y - r.y) * (y - r.y)), age = (now - r.t) / 1400, front = age * 420; y += Math.sin((dd - front) / 18) * 14 * (1 - age) * Math.exp(-Math.pow(dd - front, 2) / 2400); });
             x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
           }
           ctx.strokeStyle = col; ctx.globalAlpha = L.a; ctx.lineWidth = 1.6; ctx.stroke();
         });
         ctx.globalAlpha = 1;
-        raf = requestAnimationFrame(draw);
+        if (over || sp > .002 || ripples.length) raf = requestAnimationFrame(draw); else { sp = 0; last = 0; }
       };
       var kick = function () { if (!raf && visible) raf = requestAnimationFrame(draw); };
       var ro = new ResizeObserver(function () { size(); kick(); }); ro.observe(cv);
       var io = new IntersectionObserver(function (en) { visible = en[0].isIntersecting; kick(); }); io.observe(cv);
-      var mo = new MutationObserver(function () { col = color(); }); mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-      var mq = window.matchMedia("(prefers-color-scheme: dark)"), mqf = function () { col = color(); }; if (mq.addEventListener) mq.addEventListener("change", mqf);
-      var pm = function (e) { var r = cv.getBoundingClientRect(); px = e.clientX - r.left; py = e.clientY - r.top; };
-      var pl = function () { px = py = -9999; };
-      var pd = function (e) { if (e.target.closest("a,button")) return; var r = cv.getBoundingClientRect(); ripples.push({ x: e.clientX - r.left, y: e.clientY - r.top, t: performance.now() }); };
+      var mo = new MutationObserver(function () { col = color(); kick(); }); mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+      var mq = window.matchMedia("(prefers-color-scheme: dark)"), mqf = function () { col = color(); kick(); }; if (mq.addEventListener) mq.addEventListener("change", mqf);
+      var pm = function (e) { over = true; kick(); var r = cv.getBoundingClientRect(); px = e.clientX - r.left; py = e.clientY - r.top; };
+      var pl = function () { over = false; kick(); };
+      var pd = function (e) { if (e.target.closest("a,button")) return; var r = cv.getBoundingClientRect(); ripples.push({ x: e.clientX - r.left, y: e.clientY - r.top, t: performance.now() }); kick(); };
       var vis = function () { kick(); };
       hero.addEventListener("pointermove", pm); hero.addEventListener("pointerleave", pl); hero.addEventListener("pointerdown", pd); document.addEventListener("visibilitychange", vis);
       kick();
