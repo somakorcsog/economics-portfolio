@@ -199,7 +199,8 @@
   function lastUpdated() { var p = posts().slice().sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); })[0]; return p ? formatDate(p.date) : ""; }
   function schoolLine() { var s = state.data.site || {}; return s.school ? s.school + (s.city ? ", " + s.city : "") : ""; }
   function pageHead(kicker, title, sub, accent) {
-    return '<header class="page-head container"><div class="eyebrow">' + esc(kicker) + '</div><h1>' + esc(title) + (accent ? ' <span class="accent">' + esc(accent) + "</span>" : "") + "</h1>" + (sub ? "<p>" + esc(sub) + "</p>" : "") + "</header>";
+    var dup = kicker && title.toLowerCase().indexOf(kicker.toLowerCase()) === 0;
+    return '<header class="page-head container">' + (kicker && !dup ? '<div class="eyebrow">' + esc(kicker) + "</div>" : "") + "<h1>" + esc(title) + (accent ? ' <span class="accent">' + esc(accent) + "</span>" : "") + "</h1>" + (sub ? "<p>" + esc(sub) + "</p>" : "") + "</header>";
   }
   function stat(n, label) { return '<div class="stat"><div class="num">' + n + '</div><div class="lbl">' + esc(label) + "</div></div>"; }
 
@@ -218,8 +219,7 @@
       '<aside class="glance" aria-label="At a glance"><div class="glance-title">At a glance</div>' +
       '<div class="glance-stats">' + stat(all.length, "Assignments") + stat(c["Excursions & Events"] || 0, "Excursions") + stat(all.filter(hasVideo).length, "Videos") + stat((d.glossary || []).length, "Key terms") + "</div>" +
       '<dl class="facts">' + (schoolLine() ? "<div><dt>School</dt><dd>" + esc(schoolLine()) + "</dd></div>" : "") +
-      (site.schoolYear ? "<div><dt>School year</dt><dd>" + esc(site.schoolYear) + "</dd></div>" : "") +
-      "<div><dt>Subject</dt><dd>" + esc(site.subject || "Economics") + "</dd></div></dl></aside></section></div>";
+"</dl></aside></section></div>";
 
     h += '<section class="home-block container"><div class="block-head"><h2>Latest <span class="accent">assignments.</span></h2><a class="link" href="#posts">See all ' + all.length + "</a></div>" +
       '<div class="tiles three">' + latest.map(tile).join("") + "</div>" +
@@ -512,7 +512,7 @@
     app.innerHTML = '<article><header class="article-head container"><a class="back" href="#posts">All assignments</a>' +
       '<div class="tile-topics">' + esc((post.categories || []).join(" · ")) + "</div><h1>" + esc(post.title) + "</h1>" +
       (post.excerpt ? '<p class="lead">' + esc(post.excerpt) + "</p>" : "") +
-      '<div class="meta">' + formatDate(post.date) + " · " + readingTime(post) + " min read" + (state.data.site.schoolYear ? " · School year " + esc(state.data.site.schoolYear) : "") + "</div></header>" +
+      '<div class="meta">' + formatDate(post.date) + " · " + readingTime(post) + " min read</div></header>" +
       (showCover ? '<div class="article-cover container">' + cover(post) + "</div>" : "") +
       '<div class="article-body container">' + (post.blocks || []).map(renderBlock).join("") + "</div></article>" +
       '<nav class="post-nav container" aria-label="More assignments">' +

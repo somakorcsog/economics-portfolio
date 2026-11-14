@@ -667,3 +667,20 @@ h1, h2, h3 { text-wrap: balance; }
 @media (prefers-reduced-motion: reduce) {
   .term-rot.in > * { animation: none; }
 }
+
+/* ---------- Less is more (Nov 14) ---------- */
+.page-head h1 { font-size: clamp(2.6rem, 5vw, 4.2rem); max-width: none; }
+.page-head h1 .accent { display: inline; }
+.term > a { color: var(--muted); font-weight: 400; transition: color .2s; }
+.term > a:hover { color: var(--accent); }
+
+/* Post page: one calm left-aligned column */
+article > .article-head.container, article > .article-cover.container, article > .article-body.container, .post-nav.container { max-width: calc(780px + 2 * var(--gutter, 24px)); margin-inline: auto; }
+.article-head { text-align: left; padding-block: 48px 32px; }
+.article-head .back { display: inline-block; font-size: 14px; }
+.article-head .tile-topics { margin-top: 32px; color: var(--accent); }
+.article-head h1 { margin: 10px 0 0; max-width: 20ch; font-size: clamp(2.2rem, 4.6vw, 3.4rem); font-weight: 800; letter-spacing: -0.045em; }
+.article-head .lead { margin: 18px 0 0; max-width: 56ch; font-size: clamp(1.05rem, 1.7vw, 1.2rem); }
+.article-head .meta { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+.article-cover .cover-art { min-height: 180px; }
+.article-body { padding-top: 44px; }
