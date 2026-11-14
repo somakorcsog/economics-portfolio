@@ -208,18 +208,18 @@
     var d = state.data, site = d.site || {}, all = posts(), c = counts();
     var latest = all.slice(0, 3);
     var mo = d.makingOf;
-    var h = '<div class="hero-wrap"><canvas class="hero-field" id="hero-field" aria-hidden="true"></canvas><section class="home-hero container">' +
+    var h = '<div class="hero-wrap"><section class="home-hero container">' +
       '<div class="home-hero-text"><div class="hero-kicker">' + esc("School year " + (site.schoolYear || "")) + "</div>" +
       "<h1><span class=\"hero-word\" aria-label=\"Economics.\">" + "Economics.".split("").map(function (ch) { return '<span class="ch" aria-hidden="true">' + ch + "</span>"; }).join("") + "</span><span class=\"hero-name\">" + esc(site.author ? "with " + site.author + "." : "") + "</span></h1>" +
       '<p class="hero-sub">Assignments, videos, interviews and excursions from my Economics class.</p>' +
       '<p class="hero-note"><span class="live-dot" aria-hidden="true"></span>New content every week' + (lastUpdated() ? '<span class="hero-note-sep" aria-hidden="true">·</span><span class="hero-note-date">Last updated ' + esc(lastUpdated()) + "</span>" : "") + "</p>" +
       '<div class="hero-actions"><a class="btn" href="#posts">View all assignments</a>' +
       (all[0] ? '<a class="link" href="#post-' + esc(all[0].id) + '">Read the latest</a>' : "") + "</div></div>" +
-      '<aside class="glance" aria-label="At a glance"><div class="glance-title"><span>At a glance</span><span class="glance-clock"><span class="live-dot" aria-hidden="true"></span>Vienna <span id="vienna-time">' + viennaTime() + "</span></span></div>" +
+      '<aside class="glance" aria-label="At a glance"><div class="glance-title">At a glance</div>' +
       '<div class="glance-stats">' + stat(all.length, "Assignments") + stat(c["Excursions & Events"] || 0, "Excursions") + stat(all.filter(hasVideo).length, "Videos") + stat((d.glossary || []).length, "Key terms") + "</div>" +
       '<dl class="facts">' + (schoolLine() ? "<div><dt>School</dt><dd>" + esc(schoolLine()) + "</dd></div>" : "") +
       (site.schoolYear ? "<div><dt>School year</dt><dd>" + esc(site.schoolYear) + "</dd></div>" : "") +
-      "<div><dt>Subject</dt><dd>" + esc(site.subject || "Economics") + "</dd></div></dl></aside></section></div>" + ticker();
+      "<div><dt>Subject</dt><dd>" + esc(site.subject || "Economics") + "</dd></div></dl></aside></section></div>";
 
     h += '<section class="home-block container"><div class="block-head"><h2>Latest <span class="accent">assignments.</span></h2><a class="link" href="#posts">See all ' + all.length + "</a></div>" +
       '<div class="tiles three">' + latest.map(tile).join("") + "</div>" +
@@ -240,25 +240,10 @@
   /* ---------- home: moving extras ---------- */
   var fx = [];
   function stopHomeFx() { fx.forEach(function (f) { f(); }); fx = []; }
-  function viennaTime() {
-    try { return new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/Vienna", hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; }
-  }
-  function ticker() {
-    var d = state.data, items = [];
-    posts().forEach(function (p) { if (p.coverArt) items.push('<a href="#post-' + esc(p.id) + '"><b>' + esc(p.coverArt.big) + "</b> " + esc(p.coverArt.small) + "</a>"); });
-    (d.glossary || []).slice(0, 10).forEach(function (g) { items.push('<a href="#glossary"><b>' + esc(g.term) + "</b></a>"); });
-    if (!items.length) return "";
-    var row = items.join('<span class="tk-sep" aria-hidden="true">✦</span>') + '<span class="tk-sep" aria-hidden="true">✦</span>';
-    return '<div class="ticker" aria-label="Highlights"><div class="ticker-track"><div class="tk-set">' + row + '</div><div class="tk-set" aria-hidden="true">' + row.replace(/<a /g, '<a tabindex="-1" ') + "</div></div></div>";
-  }
   function startHomeFx() {
     stopHomeFx();
     var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-
-    // clock
-    var clock = document.getElementById("vienna-time");
-    if (clock) { var ci = setInterval(function () { clock.textContent = viennaTime(); }, 10000); fx.push(function () { clearInterval(ci); }); }
 
     // rotating key term
     var g = (state.data.glossary || []).slice(), rot = document.getElementById("term-rot"), cnt = document.getElementById("term-count");
@@ -310,48 +295,6 @@
       mb.addEventListener("pointermove", bm); mb.addEventListener("pointerleave", bl);
     }
 
-    // living market lines in the hero background
-    var cv = document.getElementById("hero-field");
-    if (cv && cv.getContext) {
-      var ctx = cv.getContext("2d"), W = 0, H = 0, dpr = Math.min(2, window.devicePixelRatio || 1), raf = 0, visible = true, t = 0;
-      var px = -9999, py = -9999, ripples = [], over = false, sp = 0, last = 0;
-      var lines = [0, 1, 2].map(function (i) { return { y: .32 + i * .2, amp: 18 + i * 8, sp: .00018 + i * .00007, ph: Math.random() * 10, f: .0042 - i * .0008, a: .16 - i * .035 }; });
-      var size = function () { var r = cv.getBoundingClientRect(); W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
-      var color = function () { return getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#1f4b99"; };
-      var col = color();
-      var draw = function (now) {
-        raf = 0; if (!visible || document.hidden) { last = 0; return; }
-        var dt = last ? Math.min(50, now - last) : 16; last = now;
-        sp += ((over ? 1 : 0) - sp) * Math.min(1, dt / 260);
-        t += dt * sp; ctx.clearRect(0, 0, W, H);
-        ripples = ripples.filter(function (r) { return now - r.t < 1400; });
-        lines.forEach(function (L) {
-          ctx.beginPath();
-          for (var x = 0; x <= W; x += 6) {
-            var y = H * L.y + Math.sin(x * L.f + t * L.sp * 6 + L.ph) * L.amp + Math.sin(x * L.f * 2.7 + t * L.sp * 9) * L.amp * .35;
-            var dx = x - px, dy = y - py, d2 = dx * dx + dy * dy;
-            y += -36 * sp * Math.exp(-d2 / 9000) * (dy < 0 ? -1 : 1);
-            ripples.forEach(function (r) { var dd = Math.sqrt((x - r.x) * (x - r.x) + (y - r.y) * (y - r.y)), age = (now - r.t) / 1400, front = age * 420; y += Math.sin((dd - front) / 18) * 14 * (1 - age) * Math.exp(-Math.pow(dd - front, 2) / 2400); });
-            x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
-          }
-          ctx.strokeStyle = col; ctx.globalAlpha = L.a; ctx.lineWidth = 1.6; ctx.stroke();
-        });
-        ctx.globalAlpha = 1;
-        if (over || sp > .002 || ripples.length) raf = requestAnimationFrame(draw); else { sp = 0; last = 0; }
-      };
-      var kick = function () { if (!raf && visible) raf = requestAnimationFrame(draw); };
-      var ro = new ResizeObserver(function () { size(); kick(); }); ro.observe(cv);
-      var io = new IntersectionObserver(function (en) { visible = en[0].isIntersecting; kick(); }); io.observe(cv);
-      var mo = new MutationObserver(function () { col = color(); kick(); }); mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-      var mq = window.matchMedia("(prefers-color-scheme: dark)"), mqf = function () { col = color(); kick(); }; if (mq.addEventListener) mq.addEventListener("change", mqf);
-      var pm = function (e) { over = true; kick(); var r = cv.getBoundingClientRect(); px = e.clientX - r.left; py = e.clientY - r.top; };
-      var pl = function () { over = false; kick(); };
-      var pd = function (e) { if (e.target.closest("a,button")) return; var r = cv.getBoundingClientRect(); ripples.push({ x: e.clientX - r.left, y: e.clientY - r.top, t: performance.now() }); kick(); };
-      var vis = function () { kick(); };
-      hero.addEventListener("pointermove", pm); hero.addEventListener("pointerleave", pl); hero.addEventListener("pointerdown", pd); document.addEventListener("visibilitychange", vis);
-      kick();
-      fx.push(function () { cancelAnimationFrame(raf); raf = 0; visible = false; ro.disconnect(); io.disconnect(); mo.disconnect(); if (mq.removeEventListener) mq.removeEventListener("change", mqf); hero.removeEventListener("pointermove", pm); hero.removeEventListener("pointerleave", pl); hero.removeEventListener("pointerdown", pd); document.removeEventListener("visibilitychange", vis); });
-    }
   }
 
   function countUp() {
